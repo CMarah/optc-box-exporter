@@ -10,6 +10,6 @@
   "author": "CMarah",
   "license": "MIT",
   "dependencies": {
-    "request": "^2.88.2"
+    "isomorphic-fetch": "^3.0.0"
   }
 }
