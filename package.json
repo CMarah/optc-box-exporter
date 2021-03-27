@@ -1,0 +1,15 @@
+{
+  "name": "optc-box-importer",
+  "version": "0.1",
+  "description": "Read optc box contents from screenshots",
+  "main": "index.html",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davidpilo/MAPP-Api.git"
+  },
+  "author": "CMarah",
+  "license": "MIT",
+  "dependencies": {
+    "request": "^2.88.2"
+  }
+}
