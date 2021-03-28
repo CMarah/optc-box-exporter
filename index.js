@@ -1,14 +1,17 @@
+const START_K = 1;
+const END_K = 3200;
 const TRUE_RESULTS = [
   null, 2534, 1984, 2417, 2834,
   2859, null, 2651, 2974, 1793,
   3156, 2112, 2112, 2087, 2087,
   null, 1891, 2965, 2965,  508,
 ];
-//TODO imagecanvas resolutions
+//TODO quit if finding great match
+//TODO add .delete()s
+//TODO resize to a fixed size (50x50?)
 
-
-let imgElement   = document.getElementById('imageOriginal');
-let inputElement = document.getElementById('imageInput');
+const imgElement   = document.getElementById('imageOriginal');
+const inputElement = document.getElementById('imageInput');
 inputElement.addEventListener('change', e => {
   imgElement.src = URL.createObjectURL(e.target.files[0]);
 }, false);
@@ -22,14 +25,13 @@ imgElement.onload = () => {
   src.delete(); dst.delete();
 };
 
-const START_K = 3100;
-const END_K = 3200;
-
 const calcSimilarity = (img, target) => {
   const dst = new cv.Mat();
   const mask = new cv.Mat();
   cv.matchTemplate(target, img, dst, cv.TM_CCOEFF_NORMED, mask);
-  return cv.minMaxLoc(dst, mask).maxVal;
+  const result = dst.data32F[0];
+  dst.delete(); mask.delete();
+  return result;
 };
 
 document.getElementById('processBtn').onclick = async () => {
@@ -113,16 +115,16 @@ document.getElementById('processBtn').onclick = async () => {
   )/4;*/
   const avg_width = 190*clean.cols/1080;
   const avg_height = 190*clean.rows/1200;
-  console.log(avg_width, avg_height);
-  console.log(clean.cols, clean.rows);
   const character_imgs = rects.map((r, i) => {
-    const rec2 = {
+    let full_image = clean.roi({
       x: 40 + (i%5)*avg_width + 30,
       y: rects[0].y + parseInt(i/5)*avg_height - 8 + 30,
       width: avg_width - 60,
       height: avg_height - 60,
-    };
-    return clean.roi(rec2);
+    });
+    const dsize = new cv.Size(full_image.cols/3, full_image.rows/3);
+    cv.resize(full_image, full_image, dsize, 0, 0, cv.INTER_AREA);
+    return full_image;
   }).slice(0, 20);
   console.log(character_imgs);
   character_imgs.forEach((img, i) => cv.imshow(`imageCanvas${i+1}b`, img));
@@ -136,31 +138,26 @@ document.getElementById('processBtn').onclick = async () => {
 
   let compare_img = document.getElementById("compare");
   let last_img_loaded = START_K;
+  console.time("TOTAL");
   compare_img.onload = () => {
     console.log("Starting", last_img_loaded);
     if (last_img_loaded === END_K) {
       console.log('DONE', accumulators);
+      console.timeEnd("TOTAL");
       return;
     }
     let target = cv.imread('compare');
-    //const dsize = new cv.Size(character_imgs[0].cols*4/3, character_imgs[0].rows*4/3);
-    //const dsize = new cv.Size(character_imgs[0].cols+60, character_imgs[0].rows+60);
-    const dsize = new cv.Size(character_imgs[0].cols + 60, character_imgs[0].rows + 60);
+    const dsize = new cv.Size(character_imgs[0].cols + 20, character_imgs[0].rows + 20);
     cv.resize(target, target, dsize, 0, 0, cv.INTER_AREA);
     target = target.roi({
-      x: 30,
-      y: 30,
+      x: 10,
+      y: 10,
       width: character_imgs[0].cols,
       height: character_imgs[0].rows,
     });
     const idx = TRUE_RESULTS.findIndex(x => x === last_img_loaded);
-    //if (last_img_loaded === 2859) {
-    //  cv.imshow('imageCanvas', target);
-    //}
-    if (idx && idx >= 0) {
-      console.log(idx);
-      cv.imshow(`imageCanvas${idx+1}`, target);
-    }
+    if (idx && idx >= 0) cv.imshow(`imageCanvas${idx+1}`, target);
+    console.time("COMPARE");
     character_imgs.forEach((img, i) => {
       const result = calcSimilarity(img, target);
       if (result > accumulators[i].best_score) {
@@ -170,6 +167,7 @@ document.getElementById('processBtn').onclick = async () => {
         };
       }
     });
+    console.timeEnd("COMPARE");
     compare_img.src = `portraits/${last_img_loaded+1}.png`;
     last_img_loaded += 1;
   };
