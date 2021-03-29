@@ -1,4 +1,3 @@
-//TODO quit if finding great match
 //TODO add .delete()s
 //TODO vs units
 
@@ -10,6 +9,13 @@ const inputElement = document.getElementById('imageInput');
 inputElement.addEventListener('change', e => {
   imgElement.src = URL.createObjectURL(e.target.files[0]);
 }, false);
+
+const compares_list = document.getElementById('compares');
+for (let k = START_K; k <= END_K; ++k) {
+  let img = document.createElement('img');
+  compares_list.appendChild(img);
+  img.outerHTML = `<img id='compare${k}' src='portraits/${k}.png' style="display: none"/>`;
+}
 
 const calcSimilarity = (img, target) => {
   const dst = new cv.Mat();
