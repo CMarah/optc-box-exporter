@@ -98,33 +98,23 @@ document.getElementById('processBtn').onclick = async () => {
     }
   }
   rects = rects.reverse();
-  //cv.imshow('imageCanvas1b', dst);
-  //const avg_width  = rects.reduce((acc, r) => acc + r.width/rects.length, 0);
-  //const avg_height = rects.reduce((acc, r) => acc + r.height/rects.length, 0);
-  /*const avg_width  = (
-    (rects[1].x - rects[0].x) +
-    (rects[2].x - rects[1].x) +
-    (rects[3].x - rects[2].x) +
-    (rects[4].x - rects[3].x)
-  )/4;
-  const avg_height = (
-    (rects[5].y - rects[0].y) +
-    (rects[10].y - rects[5].y) +
-    (rects[15].y - rects[10].y) +
-    (rects[20].y - rects[15].y)
-  )/4;*/
   const avg_width = 190*clean.cols/1080;
   const avg_height = 190*clean.rows/1200;
   const character_imgs = rects.map((r, i) => {
     let full_image = clean.roi({
-      x: 40 + (i%5)*avg_width + 30,
-      y: rects[0].y + parseInt(i/5)*avg_height - 8 + 30,
-      width: avg_width - 60,
-      height: avg_height - 60,
+      x: 40 + (i%5)*avg_width,
+      y: rects[0].y + parseInt(i/5)*avg_height - 8,
+      width: avg_width,
+      height: avg_height,
     });
-    const dsize = new cv.Size(full_image.cols/3, full_image.rows/3);
+    const dsize = new cv.Size(50, 50);
     cv.resize(full_image, full_image, dsize, 0, 0, cv.INTER_AREA);
-    return full_image;
+    return full_image.roi({
+      x: 7,
+      y: 7,
+      width: 36,
+      height: 36,
+    });
   }).slice(0, 20);
   console.log(character_imgs);
   character_imgs.forEach((img, i) => cv.imshow(`imageCanvas${i+1}b`, img));
@@ -147,17 +137,16 @@ document.getElementById('processBtn').onclick = async () => {
       return;
     }
     let target = cv.imread('compare');
-    const dsize = new cv.Size(character_imgs[0].cols + 20, character_imgs[0].rows + 20);
+    const dsize = new cv.Size(50, 50);
     cv.resize(target, target, dsize, 0, 0, cv.INTER_AREA);
     target = target.roi({
-      x: 10,
-      y: 10,
-      width: character_imgs[0].cols,
-      height: character_imgs[0].rows,
+      x: 7,
+      y: 7,
+      width: 36,
+      height: 36,
     });
     const idx = TRUE_RESULTS.findIndex(x => x === last_img_loaded);
     if (idx && idx >= 0) cv.imshow(`imageCanvas${idx+1}`, target);
-    console.time("COMPARE");
     character_imgs.forEach((img, i) => {
       const result = calcSimilarity(img, target);
       if (result > accumulators[i].best_score) {
@@ -167,7 +156,6 @@ document.getElementById('processBtn').onclick = async () => {
         };
       }
     });
-    console.timeEnd("COMPARE");
     compare_img.src = `portraits/${last_img_loaded+1}.png`;
     last_img_loaded += 1;
   };
