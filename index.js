@@ -130,61 +130,47 @@ document.getElementById('processBtn').onclick = async () => {
       height: 36,
     });
   });
-  const characters = character_imgs.map((img, i) => ({
+  let characters = character_imgs.map((img, i) => ({
     type: corner_info[i]?.type,
     img,
+    best: null,
+    best_score: 0,
   }));
   characters.forEach(({ img }, i) => img && cv.imshow(`imageCanvas${i+1}b`, img));
 
   // Idenfify each character_img
-  let accumulators = characters.map(x => ({
-    best: null,
-    best_score: 0,
-  }));
   let compare_img = document.getElementById("compare");
   let last_img_loaded = START_K;
   console.time("TOTAL");
   compare_img.onload = () => {
-    console.log("Starting", last_img_loaded);
     if (last_img_loaded === END_K) {
-      console.log('DONE', accumulators);
+      const result = characters.map(c => ({ id: c.best, type: c.type }));
+      console.log('DONE', result);
       console.timeEnd("TOTAL");
+      this.disabled = false;
       return;
     }
-    let target = cv.imread('compare');
-    const dsize = new cv.Size(50, 50);
-    cv.resize(target, target, dsize, 0, 0, cv.INTER_AREA);
-    target = target.roi({
-      x: 7,
-      y: 7,
-      width: 36,
-      height: 36,
-    });
-    const idx = TRUE_RESULTS.findIndex(x => x === last_img_loaded);
-    if (idx && idx >= 0) cv.imshow(`imageCanvas${idx+1}`, target);
-    characters.forEach(({ img, type }, i) => {
-      if (type) {
-        const target_type = Array.isArray(UNITS_DATA[last_img_loaded-1][1]) ?
-          'DUO' : UNITS_DATA[last_img_loaded-1][1];
+    const target_type = Array.isArray(UNITS_DATA[last_img_loaded-1][1]) ?
+      'DUO' : UNITS_DATA[last_img_loaded-1][1];
+    if (characters.some(c => c.type && c.type === target_type)) {
+      let target = cv.imread('compare');
+      const dsize = new cv.Size(50, 50);
+      cv.resize(target, target, dsize, 0, 0, cv.INTER_AREA);
+      target = target.roi({ x: 7, y: 7, width: 36, height: 36 });
+      characters.forEach(({ img, type, best_score }, i) => {
         if (type !== target_type) return;
-      }
-      const result = calcSimilarity(img, target);
-      if (result > accumulators[i].best_score) {
-        accumulators[i] = {
-          best: last_img_loaded,
-          best_score: result,
-        };
-      }
-    });
+        const result = calcSimilarity(img, target);
+        if (result > best_score) {
+          characters[i].best = last_img_loaded;
+          characters[i].best_score = result;
+        }
+      });
+      target.delete();
+    }
     compare_img.src = `portraits/${last_img_loaded+1}.png`;
     last_img_loaded += 1;
   };
   compare_img.onerror = () => {
-    console.log("Starting", last_img_loaded);
-    if (last_img_loaded === END_K) {
-      console.log('DONE', accumulators);
-      return;
-    }
     compare_img.src = `portraits/${last_img_loaded+1}.png`;
     last_img_loaded += 1;
   };
@@ -192,7 +178,6 @@ document.getElementById('processBtn').onclick = async () => {
 
   // Clean
   clean_img.delete();
-  this.disabled = false;
 };
 
 const onOpenCvReady = () => {
