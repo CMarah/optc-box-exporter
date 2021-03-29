@@ -1,21 +1,9 @@
-const START_K = 1;
-const END_K = 3200;
-const TRUE_RESULTS = [
-  null, 2534, 1984, 2417, 2834,
-  2859, null, 2651, 2974, 1793,
-  3156, 2112, 2112, 2087, 2087,
-  null, 1891, 2965, 2965,  508,
-];
-const TRUE_RESULTS2 = [
-  null,  202, 2656, 1965, 1965,
-  null, null, null, null, null,
-  null,  321, null, null, null,
-  null, null, null, null, null,
-];
 //TODO quit if finding great match
 //TODO add .delete()s
-//TODO resize to a fixed size (50x50?)
-//TODO only search same type
+//TODO vs units
+
+const START_K = 1;
+const END_K = UNITS_DATA.length;
 
 const imgElement   = document.getElementById('imageOriginal');
 const inputElement = document.getElementById('imageInput');
@@ -50,7 +38,7 @@ const findMatchingCorners = (clean_img, squares, p_width, p_height) => {
       cv.matchTemplate(image, corners[cn], corner_dst, cv.TM_CCOEFF_NORMED, mask);
       const result_d = cv.minMaxLoc(corner_dst, mask);
       if (result_d.maxVal > 0.9) return {
-        type: ['S', 'D', 'Q', 'P', 'I', 'X'][cn],
+        type: ['STR', 'DEX', 'QCK', 'PSY', 'INT', 'DUO'][cn],
         starting_y: squares[0].y - 70 + result_d.maxLoc.y -
           [30, 28, 30, 31, 30, 23][cn],
       }
@@ -174,7 +162,12 @@ document.getElementById('processBtn').onclick = async () => {
     });
     const idx = TRUE_RESULTS.findIndex(x => x === last_img_loaded);
     if (idx && idx >= 0) cv.imshow(`imageCanvas${idx+1}`, target);
-    characters.forEach(({ img }, i) => {
+    characters.forEach(({ img, type }, i) => {
+      if (type) {
+        const target_type = Array.isArray(UNITS_DATA[last_img_loaded-1][1]) ?
+          'DUO' : UNITS_DATA[last_img_loaded-1][1];
+        if (type !== target_type) return;
+      }
       const result = calcSimilarity(img, target);
       if (result > accumulators[i].best_score) {
         accumulators[i] = {
