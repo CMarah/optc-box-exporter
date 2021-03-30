@@ -1,15 +1,16 @@
 import { useState } from 'react';
-
-import './style.css';
 import UNITS_DATA from './data.js';
 import processImages from './cv.js';
+import './style.css';
 
 const purl = process.env.PUBLIC_URL;
 const END_K = UNITS_DATA.length;
 
 const loadInput = e => {
-  const imgElement = document.getElementById('imageOriginal');
-  imgElement.src = URL.createObjectURL(e.target.files[0]);
+  const imgElement     = document.getElementById('imageOriginal');
+  const fullImgElement = document.getElementById('fullImageOriginal');
+  imgElement.src     = URL.createObjectURL(e.target.files[0]);
+  fullImgElement.src = URL.createObjectURL(e.target.files[0]);
 };
 
 const App = () => {
@@ -21,20 +22,6 @@ const App = () => {
       <div className="jumbotron">
         <h1>OPTC Box Importer</h1>
         <p>This website uses OpenCV.js to detect your OPTC box contents.</p>
-        <img id="scorner" src={purl + "/images/scorner.png"} style={{display: 'none'}} alt=""/>
-        <img id="dcorner" src={purl + "/images/dcorner.png"} style={{display: 'none'}} alt=""/>
-        <img id="qcorner" src={purl + "/images/qcorner.png"} style={{display: 'none'}} alt=""/>
-        <img id="pcorner" src={purl + "/images/pcorner.png"} style={{display: 'none'}} alt=""/>
-        <img id="icorner" src={purl + "/images/icorner.png"} style={{display: 'none'}} alt=""/>
-        <img id="xcorner" src={purl + "/images/xcorner.png"} style={{display: 'none'}} alt=""/>
-        <ul id="compares">
-          <img id="compare" alt=""/>
-          {(new Array(END_K)).fill(0).map((x,k) => (
-            <img id={`compare${k+1}`} key={k} style={{display: "none"}} alt=""
-              src={purl + `/portraits/${k+1}.png`}
-            />
-          ))}
-        </ul>
       </div>
       <div className="row">
         <div className="col-sm">
@@ -43,7 +30,7 @@ const App = () => {
               Original Image
             </div>
             <div className="card-block text-center">
-              <img id="imageOriginal" alt="Upload"/>
+              <img id="imageOriginal" alt="Upload" style={{width: '50%'}}/>
             </div>
             <div className="card-footer text-muted">
               <input type="file" id="imageInput" name="file" onChange={loadInput}/>
@@ -113,7 +100,23 @@ const App = () => {
       </div>
     </div>
     <div className="modal"></div>
-    <script src="data.js" type="text/javascript"></script>
+    <div id="hidden_images" style={{display: 'none'}}>
+      <img id="scorner" src={purl + "/images/scorner.png"} alt=""/>
+      <img id="dcorner" src={purl + "/images/dcorner.png"} alt=""/>
+      <img id="qcorner" src={purl + "/images/qcorner.png"} alt=""/>
+      <img id="pcorner" src={purl + "/images/pcorner.png"} alt=""/>
+      <img id="icorner" src={purl + "/images/icorner.png"} alt=""/>
+      <img id="xcorner" src={purl + "/images/xcorner.png"} alt=""/>
+      <ul id="compares">
+        <img id="compare" alt=""/>
+        {(new Array(END_K)).fill(0).map((x,k) => (
+          <img id={`compare${k+1}`} key={k} style={{display: "none"}} alt=""
+            src={purl + `/portraits/${k+1}.png`}
+          />
+        ))}
+      </ul>
+      <img id="fullImageOriginal" alt="full_img"/>
+    </div>
   </>);
 }
 

@@ -47,7 +47,7 @@ const findMatchingCorners = (clean_img, squares, p_width, p_height) => {
 
 const processImages = async callback => {
   // Initialize variables
-  let clean_img = cv.imread('imageOriginal');
+  let clean_img = cv.imread('fullImageOriginal');
   const full_size = new cv.Size(1080, 1080*clean_img.rows/clean_img.cols);
   cv.resize(clean_img, clean_img, full_size, 0, 0, cv.INTER_AREA);
   clean_img = clean_img.roi({
@@ -142,7 +142,7 @@ const processImages = async callback => {
   console.time("Process time");
   compare_img.onload = () => {
     if (last_img_loaded === END_K) {
-      const result = characters.map(c => c.best_score > 0.7 ? c.best : null);
+      const result = characters.map(c => c.best_score > 0.6 ? c.best : null);
       console.timeEnd("Process time");
       return callback(result);
     }
