@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>OPTC Box Importer</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css"></style>
+  </head>
+  <body class="loading">
+    <div class="container">
+      <div class="jumbotron">
+        <h1>OPTC Box Importer</h1>
+        <p>This website uses OpenCV.js to detect your OPTC box contents.</p>
+        <img id="scorner" src="images/scorner.png" style="display: none"></canvas>
+        <img id="dcorner" src="images/dcorner.png" style="display: none"></canvas>
+        <img id="qcorner" src="images/qcorner.png" style="display: none"></canvas>
+        <img id="pcorner" src="images/pcorner.png" style="display: none"></canvas>
+        <img id="icorner" src="images/icorner.png" style="display: none"></canvas>
+        <img id="xcorner" src="images/xcorner.png" style="display: none"></canvas>
+        <ul id="compares">
+          <img id="compare"/>
+        </ul>
+      </div>
+      <div class="row">
+        <div class="col-sm">
+          <div class="card">
+            <div class="card-header">
+              Original Image
+            </div>
+            <div class="card-block text-center">
+              <img id="imageOriginal" alt="Upload"/>
+            </div>
+            <div class="card-footer text-muted">
+              <input type="file" id="imageInput" name="file" />
+            </div>
+          </div>
+        </div>
+        <div class="col-sm">
+          <div class="card">
+            <div class="card-header">
+              Modified Image
+            </div>
+            <div class="card-block">
+              <canvas id="imageCanvas1"></canvas>
+              <canvas id="imageCanvas1b"></canvas><br>
+              <canvas id="imageCanvas2"></canvas>
+              <canvas id="imageCanvas2b"></canvas><br>
+              <canvas id="imageCanvas3"></canvas>
+              <canvas id="imageCanvas3b"></canvas><br>
+              <canvas id="imageCanvas4"></canvas>
+              <canvas id="imageCanvas4b"></canvas><br>
+              <canvas id="imageCanvas5"></canvas>
+              <canvas id="imageCanvas5b"></canvas><br>
+              <canvas id="imageCanvas6"></canvas>
+              <canvas id="imageCanvas6b"></canvas><br>
+              <canvas id="imageCanvas7"></canvas>
+              <canvas id="imageCanvas7b"></canvas><br>
+              <canvas id="imageCanvas8"></canvas>
+              <canvas id="imageCanvas8b"></canvas><br>
+              <canvas id="imageCanvas9"></canvas>
+              <canvas id="imageCanvas9b"></canvas><br>
+              <canvas id="imageCanvas10"></canvas>
+              <canvas id="imageCanvas10b"></canvas><br>
+              <canvas id="imageCanvas11"></canvas>
+              <canvas id="imageCanvas11b"></canvas><br>
+              <canvas id="imageCanvas12"></canvas>
+              <canvas id="imageCanvas12b"></canvas><br>
+              <canvas id="imageCanvas13"></canvas>
+              <canvas id="imageCanvas13b"></canvas><br>
+              <canvas id="imageCanvas14"></canvas>
+              <canvas id="imageCanvas14b"></canvas><br>
+              <canvas id="imageCanvas15"></canvas>
+              <canvas id="imageCanvas15b"></canvas><br>
+              <canvas id="imageCanvas16"></canvas>
+              <canvas id="imageCanvas16b"></canvas><br>
+              <canvas id="imageCanvas17"></canvas>
+              <canvas id="imageCanvas17b"></canvas><br>
+              <canvas id="imageCanvas18"></canvas>
+              <canvas id="imageCanvas18b"></canvas><br>
+              <canvas id="imageCanvas19"></canvas>
+              <canvas id="imageCanvas19b"></canvas><br>
+              <canvas id="imageCanvas20"></canvas>
+              <canvas id="imageCanvas20b"></canvas>
+            </div>
+            <button type="button" id="processBtn" class="btn btn-primary">Detect</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal"></div>
+    <script src="data.js" type="text/javascript"></script>
+    <script src="index.js" type="text/javascript"></script>
+    <script async src="opencv.js" onload="onOpenCvReady();" type="text/javascript"></script>
+  </body>
+</html>
