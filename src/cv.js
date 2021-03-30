@@ -170,7 +170,7 @@ const processImages = async callback => {
     compare_img.src = purl + `/portraits/${last_img_loaded+1}.png`;
     last_img_loaded += 1;
   };
-  compare_img.src = purl + 'portraits/1.png';
+  compare_img.src = purl + '/portraits/1.png';
 
   // Clean
   clean_img.delete();
