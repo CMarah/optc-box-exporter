@@ -1,5 +1,6 @@
 //TODO add .delete()s
 //TODO vs units
+//TODO if not sure above 0.7, return null char
 
 const START_K = 1;
 const END_K = UNITS_DATA.length;
@@ -10,6 +11,7 @@ inputElement.addEventListener('change', e => {
   imgElement.src = URL.createObjectURL(e.target.files[0]);
 }, false);
 
+// Preload all images
 const compares_list = document.getElementById('compares');
 for (let k = START_K; k <= END_K; ++k) {
   let img = document.createElement('img');
