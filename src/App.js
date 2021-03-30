@@ -1,7 +1,7 @@
 import './App.css';
 
-const processInput = require('./plain.js');
-const UNITS_DATA = require('./data.js');
+import UNITS_DATA from './data.js';
+import processImages from './plain.js';
 
 const purl = process.env.PUBLIC_URL;
 const END_K = UNITS_DATA.length;
@@ -94,7 +94,7 @@ const App = () => {
               <canvas id="imageCanvas20b"></canvas>
             </div>
             <button type="button" id="processBtn" className="btn btn-primary"
-              onClick={processInput}
+              onClick={processImages}
             >Detect</button>
           </div>
         </div>

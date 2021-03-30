@@ -1,5 +1,5 @@
 // Found at https://raw.githubusercontent.com/optc-db/optc-db.github.io/master/common/data/units.js
-module.exports = [
+const UNITS_DATA = [
     [ "Monkey D. Luffy", "STR", "Fighter", 2, 1, 5, 0, 5, 163, 42, 15, 8, 134, 68, 15, 1 ],
     [ "Monkey D. Luffy Gum-Gum Pistol", "STR", "Fighter", 3, 4, 6, 0, 20, 26184, 130, 76, 14, 510, 249, 49, 0.7 ],
     [ "Monkey D. Luffy Gum-Gum Bazooka", "STR", "Fighter", 4, 7, 6, 2, 35, 136167, 404, 227, 39, 975, 522, 105, 1 ],
@@ -3385,3 +3385,5 @@ module.exports = [
     [ "Makino, Proprietor of a Relaxed Tavern", "PSY", [ "Cerebral", "Fighter" ], 5, 1, 5, 4, 99, 4000000, 563, 644, 160, 1645, 1011, 468, 1 ],
 ];
 // [ "Name", "Type", [ "Class1", "Class2" ], Stars, Cost, Combo, Sockets, maxLVL, EXPToMax, lvl1HP, lvl1ATK, lvl1RCV, MAXHP, MAXATK, MAXRCV, Growth Rate ],
+
+export default UNITS_DATA;

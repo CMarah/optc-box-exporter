@@ -1,5 +1,5 @@
 /*global cv*/
-const UNITS_DATA = require('./data.js');
+import UNITS_DATA from './data.js';
 
 const purl = process.env.PUBLIC_URL;
 //TODO add .delete()s
@@ -47,7 +47,7 @@ const findMatchingCorners = (clean_img, squares, p_width, p_height) => {
   return result;
 };
 
-module.exports = async () => {
+const processImages = async () => {
   // Initialize variables
   let clean_img = cv.imread('imageOriginal');
   clean_img = clean_img.roi({
@@ -176,3 +176,5 @@ module.exports = async () => {
   // Clean
   clean_img.delete();
 };
+
+export default processImages;

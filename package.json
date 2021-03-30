@@ -1,6 +1,6 @@
 {
   "name": "optx-box-exporter",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "homepage": "https://cmarah.github.io/optc-box-exporter",
   "private": true,
   "dependencies": {
