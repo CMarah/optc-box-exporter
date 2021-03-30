@@ -1,7 +1,8 @@
-import './App.css';
+import { useState } from 'react';
 
+import './style.css';
 import UNITS_DATA from './data.js';
-import processImages from './plain.js';
+import processImages from './cv.js';
 
 const purl = process.env.PUBLIC_URL;
 const END_K = UNITS_DATA.length;
@@ -12,6 +13,9 @@ const loadInput = e => {
 };
 
 const App = () => {
+  const [ processBtnDisabled, setProcessBtnDisabled ] = useState(false);
+  const [ results, setResults ] = useState([]);
+
   return (<>
     <div className="container">
       <div className="jumbotron">
@@ -94,7 +98,15 @@ const App = () => {
               <canvas id="imageCanvas20b"></canvas>
             </div>
             <button type="button" id="processBtn" className="btn btn-primary"
-              onClick={processImages}
+              disabled={processBtnDisabled}
+              onClick={() => {
+                setProcessBtnDisabled(true);
+                processImages(r => {
+                  setProcessBtnDisabled(false);
+                  setResults(r);
+                  console.log("Done", r);
+                });
+              }}
             >Detect</button>
           </div>
         </div>
@@ -102,25 +114,6 @@ const App = () => {
     </div>
     <div className="modal"></div>
     <script src="data.js" type="text/javascript"></script>
-    {/*<script src="index.js" type="text/javascript"></script>
-    <script async src="opencv.js" onLoad={onOpenCvReady} type="text/javascript"></script>
-    <script src="plain.js" type="text/javascript"></script>
-    {/*<div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>*/}
   </>);
 }
 

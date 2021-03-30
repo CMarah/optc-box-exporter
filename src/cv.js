@@ -3,10 +3,8 @@ import UNITS_DATA from './data.js';
 
 const purl = process.env.PUBLIC_URL;
 //TODO add .delete()s
-//TODO vs units
 //TODO if not sure above 0.7, return null char
 
-const START_K = 1;
 const END_K = UNITS_DATA.length;
 
 const calcSimilarity = (img, target) => {
@@ -47,17 +45,19 @@ const findMatchingCorners = (clean_img, squares, p_width, p_height) => {
   return result;
 };
 
-const processImages = async () => {
+const processImages = async callback => {
   // Initialize variables
   let clean_img = cv.imread('imageOriginal');
+  const full_size = new cv.Size(1080, 1080*clean_img.rows/clean_img.cols);
+  cv.resize(clean_img, clean_img, full_size, 0, 0, cv.INTER_AREA);
   clean_img = clean_img.roi({
     x: 0,
-    y: clean_img.rows/4,
+    y: (clean_img.rows - 1200)/2,
     width: clean_img.cols,
-    height: clean_img.rows/2,
+    height: 1200,
   });
-  const p_width = 189*clean_img.cols/1080;
-  const p_height = 189*clean_img.rows/1200;
+  const p_width = 189;
+  const p_height = 189;
 
   // Draw white squares around chars
   let hlines = new cv.Mat();
@@ -138,14 +138,13 @@ const processImages = async () => {
 
   // Idenfify each character_img
   let compare_img = document.getElementById("compare");
-  let last_img_loaded = START_K;
-  console.time("TOTAL");
+  let last_img_loaded = 1;
+  console.time("Process time");
   compare_img.onload = () => {
     if (last_img_loaded === END_K) {
-      const result = characters.map(c => ({ id: c.best, type: c.type }));
-      console.log('DONE', result);
-      console.timeEnd("TOTAL");
-      return;
+      const result = characters.map(c => c.best_score > 0.7 ? c.best : null);
+      console.timeEnd("Process time");
+      return callback(result);
     }
     const target_type = Array.isArray(UNITS_DATA[last_img_loaded-1][1]) ?
       'DUO' : UNITS_DATA[last_img_loaded-1][1];
@@ -171,7 +170,7 @@ const processImages = async () => {
     compare_img.src = purl + `/portraits/${last_img_loaded+1}.png`;
     last_img_loaded += 1;
   };
-  compare_img.src = purl + `portraits/${START_K}.png`;
+  compare_img.src = purl + 'portraits/1.png';
 
   // Clean
   clean_img.delete();
