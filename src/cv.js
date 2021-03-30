@@ -102,7 +102,7 @@ const processImages = async callback => {
   for (let i = 0; i < contours.size(); ++i) {
     const rect = cv.boundingRect(contours.get(i));
     const area = rect.width*rect.height;
-    if (area > 15000 && area < 40000) squares.push(rect);
+    if (area > 17000 && area < 40000 && rect.height > 130) squares.push(rect);
   }
   squares = squares.reverse().slice(0, 20);
   contours.delete();
@@ -123,9 +123,9 @@ const processImages = async callback => {
     cv.resize(full_image, full_image, dsize, 0, 0, cv.INTER_AREA);
     return full_image.roi({
       x: 7,
-      y: 7,
+      y: 10,
       width: 36,
-      height: 36,
+      height: 32,
     });
   });
   let characters = character_imgs.map((img, i) => ({
@@ -142,19 +142,23 @@ const processImages = async callback => {
   console.time("Process time");
   compare_img.onload = () => {
     if (last_img_loaded === END_K) {
-      const result = characters.map(c => c.best_score > 0.6 ? c.best : null);
+      const result = characters.map(c => ({
+        id: c.best_score > 0.5 ? c.best : null,
+        type: c.type,
+        score: c.best_score,
+      }));
       console.timeEnd("Process time");
       return callback(result);
     }
     const target_type = Array.isArray(UNITS_DATA[last_img_loaded-1][1]) ?
       'DUO' : UNITS_DATA[last_img_loaded-1][1];
-    if (characters.some(c => c.type && c.type === target_type)) {
+    if (characters.some(c => !c.type || c.type === target_type)) {
       let target = cv.imread('compare');
       const dsize = new cv.Size(50, 50);
       cv.resize(target, target, dsize, 0, 0, cv.INTER_AREA);
-      target = target.roi({ x: 7, y: 7, width: 36, height: 36 });
+      target = target.roi({ x: 7, y: 10, width: 36, height: 32 });
       characters.forEach(({ img, type, best_score }, i) => {
-        if (type !== target_type) return;
+        if (type && type !== target_type) return;
         const result = calcSimilarity(img, target);
         if (result > best_score) {
           characters[i].best = last_img_loaded;
