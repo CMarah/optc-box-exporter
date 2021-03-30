@@ -2,6 +2,7 @@ import { useState } from 'react';
 import UNITS_DATA from './data.js';
 import processImages from './cv.js';
 import './style.css';
+import bg from './bg.png';
 
 const purl = process.env.PUBLIC_URL;
 const END_K = UNITS_DATA.length;
@@ -18,7 +19,14 @@ const App = () => {
   const [ results, setResults ] = useState([]);
 
   return (<>
-    <div className="container">
+    <div style={{
+      backgroundImage: `url(${bg})`,
+      backgroundSize: 'cover',
+      backgroundRepeat: 'no-repeat',
+      backgroundAttachment: 'fixed',
+      paddingLeft: '15%',
+      paddingRight: '15%',
+    }}>
       <div className="jumbotron">
         <h1>OPTC Box Importer</h1>
         <p>This website uses OpenCV.js to detect your OPTC box contents.</p>
