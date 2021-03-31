@@ -7,6 +7,8 @@ const purl = process.env.PUBLIC_URL;
 
 const END_K = UNITS_DATA.length;
 const progress_step = parseInt(END_K/100);
+const p_width = 189;
+const p_height = 189;
 
 const calcSimilarity = (img, target) => {
   const dst = new cv.Mat();
@@ -46,96 +48,100 @@ const findMatchingCorners = (clean_img, squares, p_width, p_height) => {
   return result;
 };
 
-const processImages = async (setProgress, callback) => {
+const processImages = async (setProgress, callback, image_ids) => {
   // Initialize variables
-  let clean_img = cv.imread('fullImageOriginal');
-  const full_size = new cv.Size(1080, 1080*clean_img.rows/clean_img.cols);
-  cv.resize(clean_img, clean_img, full_size, 0, 0, cv.INTER_AREA);
-  clean_img = clean_img.roi({
-    x: 0,
-    y: (clean_img.rows - 1200)/2,
-    width: clean_img.cols,
-    height: 1200,
-  });
-  const p_width = 189;
-  const p_height = 189;
-
-  // Draw white squares around chars
-  let hlines = new cv.Mat();
-  let vlines = new cv.Mat();
-  let copy_1 = clean_img.clone();
-  let copy_lined = clean_img.clone();
-  cv.cvtColor(copy_1, copy_1, cv.COLOR_RGBA2GRAY, 0);
-  cv.Canny(copy_1, copy_1, 50, 200, 3);
-  cv.HoughLines(copy_1, hlines, 1, Math.PI/180, 500, 0, 0, Math.PI/2, Math.PI/2+0.1);
-  cv.HoughLines(copy_1, vlines, 1, Math.PI/180, 500, 0, 0, 0, 0.01);
-  for (let i = 0; i < (hlines.rows + vlines.rows); ++i) {
-    const rho = i < hlines.rows ?
-      hlines.data32F[i * 2] :
-      vlines.data32F[(i - hlines.rows) * 2];
-    const theta = i < hlines.rows ?
-      hlines.data32F[i * 2 + 1] :
-      vlines.data32F[(i - hlines.rows) * 2 + 1];
-    const a = Math.cos(theta);
-    const b = Math.sin(theta);
-    const x0 = a * rho;
-    const y0 = b * rho;
-    const startPoint = { x: x0 - 3000 * b, y: y0 + 3000 * a};
-    const endPoint =   { x: x0 + 3000 * b, y: y0 - 3000 * a};
-    cv.line(copy_lined, startPoint, endPoint, [255, 255, 255, 255], 6);
-  }
-  //cv.imshow('imageCanvas1', copy_lined);
-  hlines.delete(); vlines.delete(); copy_1.delete();
-
-  // Find contour for each square
-  cv.cvtColor(copy_lined, copy_lined, cv.COLOR_RGBA2GRAY, 0);
-  const ksize = new cv.Size(3, 3);
-  const anchor = new cv.Point(-1, -1);
-  cv.blur(copy_lined, copy_lined, ksize, anchor, cv.BORDER_DEFAULT);
-  cv.threshold(copy_lined, copy_lined, 250, 200, cv.THRESH_BINARY);
-  let contours = new cv.MatVector();
-  let hierarchy = new cv.Mat();
-  cv.findContours(copy_lined, contours, hierarchy, cv.RETR_CCOMP, cv.CHAIN_APPROX_SIMPLE);
-  copy_lined.delete(); hierarchy.delete();
-
-  // Find each square
-  let squares = [];
-  for (let i = 0; i < contours.size(); ++i) {
-    const rect = cv.boundingRect(contours.get(i));
-    const area = rect.width*rect.height;
-    if (area > 17000 && area < 40000 && rect.height > 130) squares.push(rect);
-  }
-  squares = squares.reverse().slice(0, 20);
-  contours.delete();
-
-  // Find type & position of each character
-  const corner_info = findMatchingCorners(clean_img, squares, p_width, p_height);
-  const starting_y = corner_info.reduce((acc, ci) => !acc && ci ? ci.starting_y : acc, null);
-
-  // Find precise character_imgs
-  const character_imgs = squares.map((r, i) => {
-    let full_image = clean_img.roi({
-      x: 40 + (i%5)*p_width,
-      y: starting_y + parseInt(i/5)*p_height,
-      width: p_width,
-      height: p_height,
+  let clean_imgs = image_ids.map(id => {
+    let ci = cv.imread(id);
+    const full_size = new cv.Size(1080, 1080*ci.rows/ci.cols);
+    cv.resize(ci, ci, full_size, 0, 0, cv.INTER_AREA);
+    const res = ci.roi({
+      x: 0,
+      y: (ci.rows - 1200)/2,
+      width: ci.cols,
+      height: 1200,
     });
-    const dsize = new cv.Size(50, 50);
-    cv.resize(full_image, full_image, dsize, 0, 0, cv.INTER_AREA);
-    return full_image.roi({
-      x: 7,
-      y: 10,
-      width: 36,
-      height: 32,
-    });
+    ci.delete();
+    return res;
   });
-  let characters = character_imgs.map((img, i) => ({
-    type: corner_info[i]?.type,
-    img,
-    best: null,
-    best_score: 0,
-  }));
-  //characters.forEach(({ img }, i) => img && cv.imshow(`imageCanvas${i+1}b`, img));
+
+  const characters = clean_imgs.map(ci => {
+    // Draw white squares around chars
+    let hlines = new cv.Mat();
+    let vlines = new cv.Mat();
+    let copy_1 = ci.clone();
+    let copy_lined = ci.clone();
+    cv.cvtColor(copy_1, copy_1, cv.COLOR_RGBA2GRAY, 0);
+    cv.Canny(copy_1, copy_1, 50, 200, 3);
+    cv.HoughLines(copy_1, hlines, 1, Math.PI/180, 500, 0, 0, Math.PI/2, Math.PI/2+0.1);
+    cv.HoughLines(copy_1, vlines, 1, Math.PI/180, 500, 0, 0, 0, 0.01);
+    for (let i = 0; i < (hlines.rows + vlines.rows); ++i) {
+      const rho = i < hlines.rows ?
+        hlines.data32F[i * 2] :
+        vlines.data32F[(i - hlines.rows) * 2];
+      const theta = i < hlines.rows ?
+        hlines.data32F[i * 2 + 1] :
+        vlines.data32F[(i - hlines.rows) * 2 + 1];
+      const a = Math.cos(theta);
+      const b = Math.sin(theta);
+      const x0 = a * rho;
+      const y0 = b * rho;
+      const startPoint = { x: x0 - 3000 * b, y: y0 + 3000 * a};
+      const endPoint =   { x: x0 + 3000 * b, y: y0 - 3000 * a};
+      cv.line(copy_lined, startPoint, endPoint, [255, 255, 255, 255], 6);
+    }
+    //cv.imshow('imageCanvas1', copy_lined);
+    hlines.delete(); vlines.delete(); copy_1.delete();
+
+    // Find contour for each square
+    cv.cvtColor(copy_lined, copy_lined, cv.COLOR_RGBA2GRAY, 0);
+    const ksize = new cv.Size(3, 3);
+    const anchor = new cv.Point(-1, -1);
+    cv.blur(copy_lined, copy_lined, ksize, anchor, cv.BORDER_DEFAULT);
+    cv.threshold(copy_lined, copy_lined, 250, 200, cv.THRESH_BINARY);
+    let contours = new cv.MatVector();
+    let hierarchy = new cv.Mat();
+    cv.findContours(copy_lined, contours, hierarchy, cv.RETR_CCOMP, cv.CHAIN_APPROX_SIMPLE);
+    copy_lined.delete(); hierarchy.delete();
+
+    // Find each square
+    let squares = [];
+    for (let i = 0; i < contours.size(); ++i) {
+      const rect = cv.boundingRect(contours.get(i));
+      const area = rect.width*rect.height;
+      if (area > 17000 && area < 40000 && rect.height > 130) squares.push(rect);
+    }
+    squares = squares.reverse().slice(0, 20);
+    contours.delete();
+
+    // Find type & position of each character
+    const corner_info = findMatchingCorners(ci, squares, p_width, p_height);
+    const starting_y = corner_info.reduce((acc, ci) => !acc && ci ? ci.starting_y : acc, null);
+
+    // Find precise character_imgs
+    const character_imgs = squares.map((r, i) => {
+      let full_image = ci.roi({
+        x: 40 + (i%5)*p_width,
+        y: starting_y + parseInt(i/5)*p_height,
+        width: p_width,
+        height: p_height,
+      });
+      const dsize = new cv.Size(50, 50);
+      cv.resize(full_image, full_image, dsize, 0, 0, cv.INTER_AREA);
+      return full_image.roi({
+        x: 7,
+        y: 10,
+        width: 36,
+        height: 32,
+      });
+    });
+
+    return character_imgs.map((img, i) => ({
+      type: corner_info[i]?.type,
+      img,
+      best: null,
+      best_score: 0,
+    }));
+  });
 
   // Idenfify each character_img
   let compare_img = document.getElementById("compare");
@@ -143,31 +149,39 @@ const processImages = async (setProgress, callback) => {
   console.time("Process time");
   compare_img.onload = () => {
     if (last_img_loaded === END_K) {
-      const result = characters.map(c => ({
+      const result = characters.map(g => g.map(c => ({
         id: c.best_score > 0.5 ? c.best : null,
         type: c.type,
         score: c.best_score,
-      }));
+      })));
       console.timeEnd("Process time");
       return callback(result);
     }
     const target_type = Array.isArray(UNITS_DATA[last_img_loaded-1][1]) ?
       'DUO' : UNITS_DATA[last_img_loaded-1][1];
-    if (characters.some(c => !c.type || c.type === target_type)) {
-      let target = cv.imread('compare');
-      const dsize = new cv.Size(50, 50);
-      cv.resize(target, target, dsize, 0, 0, cv.INTER_AREA);
-      target = target.roi({ x: 7, y: 10, width: 36, height: 32 });
-      characters.forEach(({ img, type, best_score }, i) => {
+    let target = cv.imread('compare');
+    const dsize = new cv.Size(50, 50);
+    cv.resize(target, target, dsize, 0, 0, cv.INTER_AREA);
+    target = target.roi({ x: 7, y: 10, width: 36, height: 32 });
+    characters.forEach((g, i) => {
+      g.forEach(({ img, type, best_score }, j) => {
         if (type && type !== target_type) return;
         const result = calcSimilarity(img, target);
         if (result > best_score) {
-          characters[i].best = last_img_loaded;
-          characters[i].best_score = result;
+          characters[i][j].best = last_img_loaded;
+          characters[i][j].best_score = result;
         }
       });
-      target.delete();
-    }
+    });
+    /*characters.forEach(({ img, type, best_score }, i) => {
+      if (type && type !== target_type) return;
+      const result = calcSimilarity(img, target);
+      if (result > best_score) {
+        characters[i].best = last_img_loaded;
+        characters[i].best_score = result;
+      }
+    });*/
+    target.delete();
     if (last_img_loaded%progress_step === 0) setProgress(last_img_loaded/progress_step);
     compare_img.src = purl + `/portraits/${last_img_loaded+1}.png`;
     last_img_loaded += 1;
@@ -179,7 +193,6 @@ const processImages = async (setProgress, callback) => {
   compare_img.src = purl + '/portraits/1.png';
 
   // Clean
-  clean_img.delete();
+  //clean_img.delete();
 };
-
 export default processImages;

@@ -10,22 +10,33 @@ const purl = process.env.PUBLIC_URL;
 const END_K = UNITS_DATA.length;
 const OPTCDB_URL = "https://optc-db.github.io/characters/#/view/";
 
-const loadInput = e => {
-  const imgElement     = document.getElementById("imageOriginal");
-  const fullImgElement = document.getElementById("fullImageOriginal");
-  imgElement.src     = URL.createObjectURL(e.target.files[0]);
-  fullImgElement.src = URL.createObjectURL(e.target.files[0]);
-};
-
 const App = () => {
   const [ results, setResults ] = useState([]);
-    /*{ id:1 }, { id:1 }, { id:1 }, { id:1 }, { id:1 },
-    { id:1 }, { id:1 }, { id:1 }, { id:1 }, { id:1 },
-    { id:1 }, { id:1 }, { id:1 }, { id:1 }, { id:1 },
-    { id:1 }, { id:1 }, { id:1 }, { id:1 }, { id:1 },
-  ]);*/
   const [ progress, setProgress ] = useState(0);
   const [ loading, setLoading ] = useState(false);
+  const [ inputImages, setInputImages ] = useState([]);
+
+  const loadInput = e => {
+    if (!e.target.files || !e.target.files.length) return;
+    setInputImages(inputImages.concat(
+      URL.createObjectURL(e.target.files[0])
+    ));
+  };
+
+  const runProcess = () => {
+    setLoading(true);
+    setResults([]);
+    const image_ids = Array.from(document.getElementsByClassName("fullImage")).map(n => n.id);
+    processImages(
+      setProgress,
+      r => {
+        setLoading(false);
+        setResults(r.reduce((acc, g) => acc.concat(g), []));
+        console.log("Done", r);
+      },
+      image_ids,
+    );
+  };
 
   return (<>
     <div style={{
@@ -54,22 +65,13 @@ const App = () => {
               <div style={{alignSelf: "center", fontWeight: 600}}>Original Images</div>
               <button type="button" id="processBtn" className="btn btn-primary"
                 disabled={loading}
-                onClick={() => {
-                  setLoading(true);
-                  setResults([]);
-                  processImages(
-                    setProgress,
-                    r => {
-                      setLoading(false);
-                      setResults(r);
-                      console.log("Done", r);
-                    },
-                  );
-                }}
+                onClick={runProcess}
               >Detect</button>
             </div>
             <div style={{marginTop: "1em", marginBottom: "4em", textAlign: "center"}}>
-              <img id="imageOriginal" alt="" style={{width: '30%'}} src=""/>
+              {inputImages.map((img, i) => (
+                <img id="imageOriginal" alt="" style={{width: "30%"}} src={img} key={i}/>
+              ))}
             </div>
             <div style={{
               position: "absolute",
@@ -114,7 +116,6 @@ const App = () => {
         </div>
       </div>
     </div>
-    <div className="modal"></div>
     <div id="hidden_images" style={{display: 'none'}}>
       <img id="scorner" src={purl + "/images/scorner.png"} alt=""/>
       <img id="dcorner" src={purl + "/images/dcorner.png"} alt=""/>
@@ -130,7 +131,9 @@ const App = () => {
           />
         ))}
       </ul>
-      <img id="fullImageOriginal" alt="full_img"/>
+      {inputImages.map((img, i) => (
+        <img id={`fullImageOriginal${i}`} alt="" src={img} key={i} className="fullImage"/>
+      ))}
       {/*<canvas id="imageCanvas1"></canvas>
         <canvas id="imageCanvas1b"></canvas><br/>
         <canvas id="imageCanvas2"></canvas>
