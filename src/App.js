@@ -1,22 +1,29 @@
-import { useState } from 'react';
-import UNITS_DATA from './data.js';
-import processImages from './cv.js';
-import './style.css';
-import bg from './bg.png';
+import { useState } from "react";
+import UNITS_DATA from "./data.js";
+import processImages from "./cv.js";
+import "./style.css";
+import bg from "./bg.png";
+import logo from "./OPTC_logo.png";
 
 const purl = process.env.PUBLIC_URL;
 const END_K = UNITS_DATA.length;
+const OPTCDB_URL = "https://optc-db.github.io/characters/#/view/";
 
 const loadInput = e => {
-  const imgElement     = document.getElementById('imageOriginal');
-  const fullImgElement = document.getElementById('fullImageOriginal');
+  const imgElement     = document.getElementById("imageOriginal");
+  const fullImgElement = document.getElementById("fullImageOriginal");
   imgElement.src     = URL.createObjectURL(e.target.files[0]);
   fullImgElement.src = URL.createObjectURL(e.target.files[0]);
 };
 
 const App = () => {
   const [ processBtnDisabled, setProcessBtnDisabled ] = useState(false);
-  const [ results, setResults ] = useState([]);
+  const [ results, setResults ] = useState([
+    { id:1 }, { id:1 }, { id:1 }, { id:1 }, { id:1 },
+    { id:1 }, { id:1 }, { id:1 }, { id:1 }, { id:1 },
+    { id:1 }, { id:1 }, { id:1 }, { id:1 }, { id:1 },
+    { id:1 }, { id:1 }, { id:1 }, { id:1 }, { id:1 },
+  ]);
 
   return (<>
     <div style={{
@@ -26,83 +33,66 @@ const App = () => {
       backgroundAttachment: 'fixed',
       paddingLeft: '15%',
       paddingRight: '15%',
+      minHeight: '100vh',
     }}>
-      <div className="jumbotron">
-        <h1>OPTC Box Importer</h1>
-        <p>This website uses OpenCV.js to detect your OPTC box contents.</p>
+      <div style={{textAlign: "center", padding: "2em", color: "white"}}>
+        <img src={logo} alt=""/>
+        <h1>OPTC Box Exporter</h1>
       </div>
       <div className="row">
-        <div className="col-sm">
-          <div className="card">
-            <div className="card-header">
-              Original Image
+        <div style={{width: "calc(50% - 1em)", marginRight: "1em"}}>
+          <div className="card" style={{minHeight: "50vh", position: "relative"}}>
+            <div style={{
+              display: "flex",
+              justifyContent: "space-between",
+              backgroundColor: "rgba(0,0,0,.03)",
+              borderBottom: "1px solid rgba(0,0,0,.125)",
+              padding: "0.5em",
+            }}>
+              <div style={{alignSelf: "center", fontWeight: 600}}>Original Images</div>
+              <button type="button" id="processBtn" className="btn btn-primary"
+                disabled={processBtnDisabled}
+                onClick={() => {
+                  setProcessBtnDisabled(true);
+                  processImages(r => {
+                    setProcessBtnDisabled(false);
+                    setResults(r);
+                    console.log("Done", r);
+                  });
+                }}
+              >Detect</button>
             </div>
-            <div className="card-block text-center">
-              <img id="imageOriginal" alt="Upload" style={{width: '50%'}}/>
+            <div style={{marginTop: "1em", marginBottom: "4em", textAlign: "center"}}>
+              <img id="imageOriginal" alt="" style={{width: '30%'}} src=""/>
             </div>
-            <div className="card-footer text-muted">
+            <div style={{
+              position: "absolute",
+              bottom: 0,
+              width: "100%",
+              color: "#868e96",
+              backgroundColor: "rgba(0,0,0,.03)",
+              borderTop: "1px solid rgba(0,0,0,.125)",
+              padding: "0.5em",
+            }}>
               <input type="file" id="imageInput" name="file" onChange={loadInput}/>
             </div>
           </div>
         </div>
-        <div className="col-sm">
+        <div style={{ width: "calc(50% - 1em)", marginLeft: "1em"}}>
           <div className="card">
             <div className="card-header">
-              Modified Image
+              Detected Characters
             </div>
-            <div className="card-block">
-              <canvas id="imageCanvas1"></canvas>
-              <canvas id="imageCanvas1b"></canvas><br/>
-              <canvas id="imageCanvas2"></canvas>
-              <canvas id="imageCanvas2b"></canvas><br/>
-              <canvas id="imageCanvas3"></canvas>
-              <canvas id="imageCanvas3b"></canvas><br/>
-              <canvas id="imageCanvas4"></canvas>
-              <canvas id="imageCanvas4b"></canvas><br/>
-              <canvas id="imageCanvas5"></canvas>
-              <canvas id="imageCanvas5b"></canvas><br/>
-              <canvas id="imageCanvas6"></canvas>
-              <canvas id="imageCanvas6b"></canvas><br/>
-              <canvas id="imageCanvas7"></canvas>
-              <canvas id="imageCanvas7b"></canvas><br/>
-              <canvas id="imageCanvas8"></canvas>
-              <canvas id="imageCanvas8b"></canvas><br/>
-              <canvas id="imageCanvas9"></canvas>
-              <canvas id="imageCanvas9b"></canvas><br/>
-              <canvas id="imageCanvas10"></canvas>
-              <canvas id="imageCanvas10b"></canvas><br/>
-              <canvas id="imageCanvas11"></canvas>
-              <canvas id="imageCanvas11b"></canvas><br/>
-              <canvas id="imageCanvas12"></canvas>
-              <canvas id="imageCanvas12b"></canvas><br/>
-              <canvas id="imageCanvas13"></canvas>
-              <canvas id="imageCanvas13b"></canvas><br/>
-              <canvas id="imageCanvas14"></canvas>
-              <canvas id="imageCanvas14b"></canvas><br/>
-              <canvas id="imageCanvas15"></canvas>
-              <canvas id="imageCanvas15b"></canvas><br/>
-              <canvas id="imageCanvas16"></canvas>
-              <canvas id="imageCanvas16b"></canvas><br/>
-              <canvas id="imageCanvas17"></canvas>
-              <canvas id="imageCanvas17b"></canvas><br/>
-              <canvas id="imageCanvas18"></canvas>
-              <canvas id="imageCanvas18b"></canvas><br/>
-              <canvas id="imageCanvas19"></canvas>
-              <canvas id="imageCanvas19b"></canvas><br/>
-              <canvas id="imageCanvas20"></canvas>
-              <canvas id="imageCanvas20b"></canvas>
+            <div style={{display: 'flex', flexWrap: 'wrap', marginBottom: '1em'}}>
+              {results.map((r, i) => (
+                <div style={{ width: '20%', textAlign: 'center', marginTop: '1em' }} key={i}>{
+                  r.id && <img key={i} alt="" src={purl + `/portraits/${r.id}.png`}
+                    style={{cursor: "pointer"}}
+                    onClick={()=> window.open(OPTCDB_URL + r.id, "_blank")}
+                  />
+                }</div>
+              ))}
             </div>
-            <button type="button" id="processBtn" className="btn btn-primary"
-              disabled={processBtnDisabled}
-              onClick={() => {
-                setProcessBtnDisabled(true);
-                processImages(r => {
-                  setProcessBtnDisabled(false);
-                  setResults(r);
-                  console.log("Done", r);
-                });
-              }}
-            >Detect</button>
           </div>
         </div>
       </div>
@@ -124,6 +114,46 @@ const App = () => {
         ))}
       </ul>
       <img id="fullImageOriginal" alt="full_img"/>
+      {/*<canvas id="imageCanvas1"></canvas>
+        <canvas id="imageCanvas1b"></canvas><br/>
+        <canvas id="imageCanvas2"></canvas>
+        <canvas id="imageCanvas2b"></canvas><br/>
+        <canvas id="imageCanvas3"></canvas>
+        <canvas id="imageCanvas3b"></canvas><br/>
+        <canvas id="imageCanvas4"></canvas>
+        <canvas id="imageCanvas4b"></canvas><br/>
+        <canvas id="imageCanvas5"></canvas>
+        <canvas id="imageCanvas5b"></canvas><br/>
+        <canvas id="imageCanvas6"></canvas>
+        <canvas id="imageCanvas6b"></canvas><br/>
+        <canvas id="imageCanvas7"></canvas>
+        <canvas id="imageCanvas7b"></canvas><br/>
+        <canvas id="imageCanvas8"></canvas>
+        <canvas id="imageCanvas8b"></canvas><br/>
+        <canvas id="imageCanvas9"></canvas>
+        <canvas id="imageCanvas9b"></canvas><br/>
+        <canvas id="imageCanvas10"></canvas>
+        <canvas id="imageCanvas10b"></canvas><br/>
+        <canvas id="imageCanvas11"></canvas>
+        <canvas id="imageCanvas11b"></canvas><br/>
+        <canvas id="imageCanvas12"></canvas>
+        <canvas id="imageCanvas12b"></canvas><br/>
+        <canvas id="imageCanvas13"></canvas>
+        <canvas id="imageCanvas13b"></canvas><br/>
+        <canvas id="imageCanvas14"></canvas>
+        <canvas id="imageCanvas14b"></canvas><br/>
+        <canvas id="imageCanvas15"></canvas>
+        <canvas id="imageCanvas15b"></canvas><br/>
+        <canvas id="imageCanvas16"></canvas>
+        <canvas id="imageCanvas16b"></canvas><br/>
+        <canvas id="imageCanvas17"></canvas>
+        <canvas id="imageCanvas17b"></canvas><br/>
+        <canvas id="imageCanvas18"></canvas>
+        <canvas id="imageCanvas18b"></canvas><br/>
+        <canvas id="imageCanvas19"></canvas>
+        <canvas id="imageCanvas19b"></canvas><br/>
+        <canvas id="imageCanvas20"></canvas>
+        <canvas id="imageCanvas20b"></canvas>*/}
     </div>
   </>);
 }

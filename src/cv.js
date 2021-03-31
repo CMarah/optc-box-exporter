@@ -83,7 +83,7 @@ const processImages = async callback => {
     const endPoint =   { x: x0 + 3000 * b, y: y0 - 3000 * a};
     cv.line(copy_lined, startPoint, endPoint, [255, 255, 255, 255], 6);
   }
-  cv.imshow('imageCanvas1', copy_lined);
+  //cv.imshow('imageCanvas1', copy_lined);
   hlines.delete(); vlines.delete(); copy_1.delete();
 
   // Find contour for each square
@@ -134,7 +134,7 @@ const processImages = async callback => {
     best: null,
     best_score: 0,
   }));
-  characters.forEach(({ img }, i) => img && cv.imshow(`imageCanvas${i+1}b`, img));
+  //characters.forEach(({ img }, i) => img && cv.imshow(`imageCanvas${i+1}b`, img));
 
   // Idenfify each character_img
   let compare_img = document.getElementById("compare");
