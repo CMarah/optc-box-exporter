@@ -4,6 +4,7 @@ import processImages from "./cv.js";
 import "./style.css";
 import bg from "./bg.png";
 import logo from "./OPTC_logo.png";
+import load_logo from "./loading.png";
 
 const purl = process.env.PUBLIC_URL;
 const END_K = UNITS_DATA.length;
@@ -17,13 +18,14 @@ const loadInput = e => {
 };
 
 const App = () => {
-  const [ processBtnDisabled, setProcessBtnDisabled ] = useState(false);
-  const [ results, setResults ] = useState([
+  const [ results, setResults ] = useState([]);
+    /*{ id:1 }, { id:1 }, { id:1 }, { id:1 }, { id:1 },
     { id:1 }, { id:1 }, { id:1 }, { id:1 }, { id:1 },
     { id:1 }, { id:1 }, { id:1 }, { id:1 }, { id:1 },
     { id:1 }, { id:1 }, { id:1 }, { id:1 }, { id:1 },
-    { id:1 }, { id:1 }, { id:1 }, { id:1 }, { id:1 },
-  ]);
+  ]);*/
+  const [ progress, setProgress ] = useState(0);
+  const [ loading, setLoading ] = useState(false);
 
   return (<>
     <div style={{
@@ -51,14 +53,18 @@ const App = () => {
             }}>
               <div style={{alignSelf: "center", fontWeight: 600}}>Original Images</div>
               <button type="button" id="processBtn" className="btn btn-primary"
-                disabled={processBtnDisabled}
+                disabled={loading}
                 onClick={() => {
-                  setProcessBtnDisabled(true);
-                  processImages(r => {
-                    setProcessBtnDisabled(false);
-                    setResults(r);
-                    console.log("Done", r);
-                  });
+                  setLoading(true);
+                  setResults([]);
+                  processImages(
+                    setProgress,
+                    r => {
+                      setLoading(false);
+                      setResults(r);
+                      console.log("Done", r);
+                    },
+                  );
                 }}
               >Detect</button>
             </div>
@@ -78,20 +84,31 @@ const App = () => {
             </div>
           </div>
         </div>
-        <div style={{ width: "calc(50% - 1em)", marginLeft: "1em"}}>
+        <div style={{ width: "calc(50% - 1em)", marginLeft: "1em", minHeight: "50vh"}}>
           <div className="card">
-            <div className="card-header">
+            <div className="card-header" style={{fontWeight: 600}}>
               Detected Characters
             </div>
             <div style={{display: 'flex', flexWrap: 'wrap', marginBottom: '1em'}}>
-              {results.map((r, i) => (
-                <div style={{ width: '20%', textAlign: 'center', marginTop: '1em' }} key={i}>{
-                  r.id && <img key={i} alt="" src={purl + `/portraits/${r.id}.png`}
-                    style={{cursor: "pointer"}}
-                    onClick={()=> window.open(OPTCDB_URL + r.id, "_blank")}
-                  />
-                }</div>
-              ))}
+              {results.length ?
+                results.map((r, i) => (
+                  <div style={{ width: '20%', textAlign: 'center', marginTop: '1em' }} key={i}>{
+                    r.id && <img key={i} alt="" src={purl + `/portraits/${r.id}.png`}
+                      style={{cursor: "pointer"}}
+                      onClick={()=> window.open(OPTCDB_URL + r.id, "_blank")}
+                    />
+                  }</div>
+                )) : loading ? (<div style={{
+                  paddingTop: "5em",
+                  display: "flex",
+                  flexDirection: "column",
+                  textAlign: "center",
+                  margin: "auto",
+                }}>
+                  <img className="rotating" alt="" src={load_logo}/>
+                  {progress <= 100 ? progress : 100}%
+                </div>) : (<div style={{minHeight: "50vh"}}></div>)
+              }
             </div>
           </div>
         </div>

@@ -6,6 +6,7 @@ const purl = process.env.PUBLIC_URL;
 //TODO if not sure above 0.7, return null char
 
 const END_K = UNITS_DATA.length;
+const progress_step = parseInt(END_K/100);
 
 const calcSimilarity = (img, target) => {
   const dst = new cv.Mat();
@@ -45,7 +46,7 @@ const findMatchingCorners = (clean_img, squares, p_width, p_height) => {
   return result;
 };
 
-const processImages = async callback => {
+const processImages = async (setProgress, callback) => {
   // Initialize variables
   let clean_img = cv.imread('fullImageOriginal');
   const full_size = new cv.Size(1080, 1080*clean_img.rows/clean_img.cols);
@@ -167,6 +168,7 @@ const processImages = async callback => {
       });
       target.delete();
     }
+    if (last_img_loaded%progress_step === 0) setProgress(last_img_loaded/progress_step);
     compare_img.src = purl + `/portraits/${last_img_loaded+1}.png`;
     last_img_loaded += 1;
   };
