@@ -10,6 +10,8 @@ const purl = process.env.PUBLIC_URL;
 const END_K = UNITS_DATA.length;
 const OPTCDB_URL = "https://optc-db.github.io/characters/#/view/";
 
+//TODO 1ms timeout before processImages?
+
 const App = () => {
   const [ results, setResults ] = useState([]);
   const [ progress, setProgress ] = useState(0);
@@ -18,9 +20,11 @@ const App = () => {
 
   const loadInput = e => {
     if (!e.target.files || !e.target.files.length) return;
-    setInputImages(inputImages.concat(
-      URL.createObjectURL(e.target.files[0])
-    ));
+    let files = [];
+    for (let i = 0; i < e.target.files.length; ++i) {
+      files.push(URL.createObjectURL(e.target.files[i]));
+    }
+    setInputImages(inputImages.concat(files));
   };
 
   const runProcess = () => {
@@ -30,6 +34,7 @@ const App = () => {
     processImages(
       setProgress,
       r => {
+        setProgress(0);
         setLoading(false);
         setResults(r.reduce((acc, g) => acc.concat(g), []));
         console.log("Done", r);
@@ -68,10 +73,29 @@ const App = () => {
                 onClick={runProcess}
               >Detect</button>
             </div>
-            <div style={{marginTop: "1em", marginBottom: "4em", textAlign: "center"}}>
+            <div style={{
+              marginBottom: "4em",
+              display: "flex",
+              flexWrap: "wrap",
+            }}>
               {inputImages.map((img, i) => (
-                <img id="imageOriginal" alt="" style={{width: "30%"}} src={img} key={i}/>
+                <div className="imageDiv" title="Click to remove" onClick={
+                  () => {setInputImages([...inputImages.slice(0,i), ...inputImages.slice(i+1)])}
+                }>
+                  <img id="imageOriginal" alt="" src={img} className="inputImage" key={i}/>
+                </div>
               ))}
+              <div className="imageDiv" style={{
+                borderRadius: "3em",
+                border: "3px solid #8080806e",
+                textAlign: "center",
+                fontWeight: 800,
+                color: "grey",
+              }}
+                onClick={() => { document.getElementById("imageInput").click(); }}
+              >
+                <div style={{marginTop: "1.8em", fontSize: "6em"}}>+</div>
+              </div>
             </div>
             <div style={{
               position: "absolute",
@@ -82,7 +106,9 @@ const App = () => {
               borderTop: "1px solid rgba(0,0,0,.125)",
               padding: "0.5em",
             }}>
-              <input type="file" id="imageInput" name="file" onChange={loadInput}/>
+              <input type="file" id="imageInput" name="file" onChange={loadInput}
+                style={{display: "none"}} multiple="multiple"
+              />
             </div>
           </div>
         </div>

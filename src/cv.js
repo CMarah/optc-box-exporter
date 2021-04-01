@@ -2,8 +2,7 @@
 import UNITS_DATA from './data.js';
 
 const purl = process.env.PUBLIC_URL;
-//TODO add .delete()s
-//TODO if not sure above 0.7, return null char
+//TODO smaller images when checking for corner?
 
 const END_K = UNITS_DATA.length;
 const progress_step = parseInt(END_K/100);
@@ -19,13 +18,9 @@ const calcSimilarity = (img, target) => {
   return result;
 };
 
-const findMatchingCorners = (clean_img, squares, p_width, p_height) => {
+const findMatchingCorners = (clean_img, squares, p_width, p_height, corners) => {
   let corner_dst = new cv.Mat();
   let mask = new cv.Mat();
-  const corners = [
-    cv.imread('scorner'), cv.imread('dcorner'), cv.imread('qcorner'),
-    cv.imread('pcorner'), cv.imread('icorner'), cv.imread('xcorner'),
-  ];
   const result = squares.map((sq, i) => {
     const image = clean_img.roi({
       x: 40 + (i%5)*p_width,
@@ -49,7 +44,12 @@ const findMatchingCorners = (clean_img, squares, p_width, p_height) => {
 };
 
 const processImages = async (setProgress, callback, image_ids) => {
-  // Initialize variables
+  const corners = [
+    cv.imread('scorner'), cv.imread('dcorner'), cv.imread('qcorner'),
+    cv.imread('pcorner'), cv.imread('icorner'), cv.imread('xcorner'),
+  ];
+
+  // Initial images
   let clean_imgs = image_ids.map(id => {
     let ci = cv.imread(id);
     const full_size = new cv.Size(1080, 1080*ci.rows/ci.cols);
@@ -114,7 +114,7 @@ const processImages = async (setProgress, callback, image_ids) => {
     contours.delete();
 
     // Find type & position of each character
-    const corner_info = findMatchingCorners(ci, squares, p_width, p_height);
+    const corner_info = findMatchingCorners(ci, squares, p_width, p_height, corners);
     const starting_y = corner_info.reduce((acc, ci) => !acc && ci ? ci.starting_y : acc, null);
 
     // Find precise character_imgs
@@ -127,27 +127,32 @@ const processImages = async (setProgress, callback, image_ids) => {
       });
       const dsize = new cv.Size(50, 50);
       cv.resize(full_image, full_image, dsize, 0, 0, cv.INTER_AREA);
-      return full_image.roi({
+      const res = full_image.roi({
         x: 7,
         y: 10,
         width: 36,
         height: 32,
       });
+      full_image.delete();
+      return res;
     });
-
-    return character_imgs.map((img, i) => ({
+    const res = character_imgs.map((img, i) => ({
       type: corner_info[i]?.type,
       img,
       best: null,
       best_score: 0,
     }));
+    ci.delete();
+    return res;
   });
+  corners.forEach(x => x.delete());
 
   // Idenfify each character_img
   let compare_img = document.getElementById("compare");
   let last_img_loaded = 1;
   console.time("Process time");
   compare_img.onload = () => {
+    console.log("STARTING", last_img_loaded);
     if (last_img_loaded === END_K) {
       const result = characters.map(g => g.map(c => ({
         id: c.best_score > 0.5 ? c.best : null,
@@ -173,14 +178,6 @@ const processImages = async (setProgress, callback, image_ids) => {
         }
       });
     });
-    /*characters.forEach(({ img, type, best_score }, i) => {
-      if (type && type !== target_type) return;
-      const result = calcSimilarity(img, target);
-      if (result > best_score) {
-        characters[i].best = last_img_loaded;
-        characters[i].best_score = result;
-      }
-    });*/
     target.delete();
     if (last_img_loaded%progress_step === 0) setProgress(last_img_loaded/progress_step);
     compare_img.src = purl + `/portraits/${last_img_loaded+1}.png`;
@@ -191,8 +188,5 @@ const processImages = async (setProgress, callback, image_ids) => {
     last_img_loaded += 1;
   };
   compare_img.src = purl + '/portraits/1.png';
-
-  // Clean
-  //clean_img.delete();
 };
 export default processImages;
