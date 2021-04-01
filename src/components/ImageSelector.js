@@ -51,7 +51,7 @@ const ImageSelector = ({
           zIndex: "10",
         }}
           disabled={loading}
-          onClick={() => setLoading(true)}
+          onClick={() => (!loading) && setLoading(true)}
         >GO!</div>
       </div>
       <div style={{
