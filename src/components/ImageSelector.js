@@ -1,4 +1,6 @@
 import { useRef } from "react";
+import titlebg    from "../titlebg.png";
+import gobg       from "../gobg.png";
 
 const ImageSelector = ({
   loading,
@@ -18,19 +20,31 @@ const ImageSelector = ({
   };
 
   return (
-    <div className="card" style={{minHeight: "50vh", position: "relative"}}>
+    <div style={{position: "relative"}}>
       <div style={{
         display: "flex",
-        justifyContent: "space-between",
-        backgroundColor: "rgba(0,0,0,.03)",
-        borderBottom: "1px solid rgba(0,0,0,.125)",
-        padding: "0.5em",
       }}>
-        <div style={{alignSelf: "center", fontWeight: 600}}>Original Images</div>
-        <button type="button" id="processBtn" className="btn btn-primary"
+        <div style={{backgroundImage: `url(${titlebg})`}} className="panelTitle">
+          SCREENSHOTS
+        </div>
+        <div type="button" id="processBtn" style={{
+          backgroundImage: `url(${gobg})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          position: "absolute",
+          right: "0em",
+          height: "4em",
+          width: "5em",
+          margin: "auto",
+          textAlign: "center",
+          lineHeight: "4em",
+          cursor: "pointer",
+          fontSize: "x-large",
+          zIndex: "10",
+        }}
           disabled={loading}
           onClick={runProcess}
-        >Detect</button>
+        >GO!</div>
       </div>
       <div style={{
         marginBottom: "4em",
@@ -56,20 +70,10 @@ const ImageSelector = ({
           <div style={{marginTop: "1.8em", fontSize: "6em"}}>+</div>
         </div>
       </div>
-      <div style={{
-        position: "absolute",
-        bottom: 0,
-        width: "100%",
-        color: "#868e96",
-        backgroundColor: "rgba(0,0,0,.03)",
-        borderTop: "1px solid rgba(0,0,0,.125)",
-        padding: "0.5em",
-      }}>
-        <input type="file" id="imageInput" name="file" onChange={loadInput}
-          style={{display: "none"}} multiple="multiple"
-          ref={fileInputEl}
-        />
-      </div>
+      <input type="file" id="imageInput" name="file" onChange={loadInput}
+        style={{display: "none"}} multiple="multiple"
+        ref={fileInputEl}
+      />
     </div>
   );
 };

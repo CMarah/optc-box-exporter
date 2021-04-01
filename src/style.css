@@ -1,3 +1,33 @@
+.mainContent {
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  padding-left: 15%;
+  padding-right: 15%;
+  min-height: 100vh;
+  padding-bottom: 5em;
+  font-family: 'Dela Gothic One', cursive;
+}
+
+.mainPanel {
+  width: calc(50% - 1em);
+  margin-left: 1em;
+  min-height: 50vh;
+  background: rgb(36, 28, 21);
+  border: 3px solid #ab8002;
+  border-radius: 0.5em;
+}
+
+.panelTitle {
+  background-size: cover;
+  width: fit-content;
+  margin: 0.5em auto auto;
+  padding: 0.5em;
+  color: rgb(254 247 177);
+  width: 13em;
+  text-align: center;
+}
+
 .rotating {
   -webkit-animation-name: spin;
   -webkit-animation-duration: 4000ms;
@@ -70,13 +100,4 @@
   left: 0;
   right: 0;
   margin: auto;
-}
-
-.mainContent {
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  padding-left: 15%;
-  padding-right: 15%;
-  min-height: 100vh;
 }

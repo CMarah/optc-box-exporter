@@ -2,6 +2,7 @@ import { useState }  from "react";
 import UNITS_DATA    from "./data.js";
 import processImages from "./cv.js";
 import bg            from "./bg.png";
+import titlebg       from "./titlebg.png";
 import logo          from "./OPTC_logo.png";
 import load_logo     from "./loading.png";
 import ImageSelector from "./components/ImageSelector";
@@ -35,10 +36,10 @@ const App = () => {
     <div style={{backgroundImage: `url(${bg})`}} className="mainContent">
       <div style={{textAlign: "center", padding: "2em", color: "white"}}>
         <img src={logo} alt=""/>
-        <h1>OPTC Box Exporter</h1>
+        <h1 style={{color: "rgb(254 247 177)"}}>OPTC Box Exporter</h1>
       </div>
       <div className="row">
-        <div style={{width: "calc(50% - 1em)", marginRight: "1em"}}>
+        <div className="mainPanel">
           <ImageSelector
             loading={loading}
             inputImages={inputImages}
@@ -46,32 +47,30 @@ const App = () => {
             runProcess={runProcess}
           />
         </div>
-        <div style={{ width: "calc(50% - 1em)", marginLeft: "1em", minHeight: "50vh"}}>
-          <div className="card">
-            <div className="card-header" style={{fontWeight: 600}}>
-              Detected Characters
-            </div>
-            <div style={{display: 'flex', flexWrap: 'wrap', marginBottom: '1em'}}>
-              {results.length ?
-                results.map((r, i) => (
-                  <div style={{ width: '20%', textAlign: 'center', marginTop: '1em' }} key={i}>{
-                    r.id && <img key={i} alt="" src={purl + `/portraits/${r.id}.png`}
-                      style={{cursor: "pointer"}}
-                      onClick={()=> window.open(OPTCDB_URL + r.id, "_blank")}
-                    />
-                  }</div>
-                )) : loading ? (<div style={{
-                  paddingTop: "5em",
-                  display: "flex",
-                  flexDirection: "column",
-                  textAlign: "center",
-                  margin: "auto",
-                }}>
-                  <img className="rotating" alt="" src={load_logo}/>
-                  {progress <= 100 ? progress : 100}%
-                </div>) : (<div style={{minHeight: "50vh"}}></div>)
-              }
-            </div>
+        <div className="mainPanel">
+          <div style={{backgroundImage: `url(${titlebg})`}} className="panelTitle">
+            CHARACTERS
+          </div>
+          <div style={{display: 'flex', flexWrap: 'wrap', marginBottom: '1em'}}>
+            {results.length ?
+              results.map((r, i) => (
+                <div style={{ width: '20%', textAlign: 'center', marginTop: '1em' }} key={i}>{
+                  r.id && <img key={i} alt="" src={purl + `/portraits/${r.id}.png`}
+                    style={{cursor: "pointer"}}
+                    onClick={()=> window.open(OPTCDB_URL + r.id, "_blank")}
+                  />
+                }</div>
+              )) : loading ? (<div style={{
+                paddingTop: "5em",
+                display: "flex",
+                flexDirection: "column",
+                textAlign: "center",
+                margin: "auto",
+              }}>
+                <img className="rotating" alt="" src={load_logo}/>
+                {progress <= 100 ? progress : 100}%
+              </div>) : (<div style={{minHeight: "50vh"}}></div>)
+            }
           </div>
         </div>
       </div>
