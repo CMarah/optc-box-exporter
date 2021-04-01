@@ -1,36 +1,25 @@
-import { useState } from "react";
-import UNITS_DATA from "./data.js";
+import { useState }  from "react";
+import UNITS_DATA    from "./data.js";
 import processImages from "./cv.js";
+import bg            from "./bg.png";
+import logo          from "./OPTC_logo.png";
+import load_logo     from "./loading.png";
+import ImageSelector from "./components/ImageSelector";
 import "./style.css";
-import bg from "./bg.png";
-import logo from "./OPTC_logo.png";
-import load_logo from "./loading.png";
 
-const purl = process.env.PUBLIC_URL;
-const END_K = UNITS_DATA.length;
 const OPTCDB_URL = "https://optc-db.github.io/characters/#/view/";
-
-//TODO 1ms timeout before processImages?
+const END_K      = UNITS_DATA.length;
+const purl       = process.env.PUBLIC_URL;
 
 const App = () => {
-  const [ results, setResults ] = useState([]);
-  const [ progress, setProgress ] = useState(0);
-  const [ loading, setLoading ] = useState(false);
   const [ inputImages, setInputImages ] = useState([]);
-
-  const loadInput = e => {
-    if (!e.target.files || !e.target.files.length) return;
-    let files = [];
-    for (let i = 0; i < e.target.files.length; ++i) {
-      files.push(URL.createObjectURL(e.target.files[i]));
-    }
-    setInputImages(inputImages.concat(files));
-  };
+  const [ results, setResults ]         = useState([]);
+  const [ progress, setProgress ]       = useState(0);
+  const [ loading, setLoading ]         = useState(false);
 
   const runProcess = () => {
     setLoading(true);
     setResults([]);
-    const image_ids = Array.from(document.getElementsByClassName("fullImage")).map(n => n.id);
     processImages(
       setProgress,
       r => {
@@ -39,78 +28,23 @@ const App = () => {
         setResults(r.reduce((acc, g) => acc.concat(g), []));
         console.log("Done", r);
       },
-      image_ids,
     );
   };
 
   return (<>
-    <div style={{
-      backgroundImage: `url(${bg})`,
-      backgroundSize: 'cover',
-      backgroundRepeat: 'no-repeat',
-      backgroundAttachment: 'fixed',
-      paddingLeft: '15%',
-      paddingRight: '15%',
-      minHeight: '100vh',
-    }}>
+    <div style={{backgroundImage: `url(${bg})`}} className="mainContent">
       <div style={{textAlign: "center", padding: "2em", color: "white"}}>
         <img src={logo} alt=""/>
         <h1>OPTC Box Exporter</h1>
       </div>
       <div className="row">
         <div style={{width: "calc(50% - 1em)", marginRight: "1em"}}>
-          <div className="card" style={{minHeight: "50vh", position: "relative"}}>
-            <div style={{
-              display: "flex",
-              justifyContent: "space-between",
-              backgroundColor: "rgba(0,0,0,.03)",
-              borderBottom: "1px solid rgba(0,0,0,.125)",
-              padding: "0.5em",
-            }}>
-              <div style={{alignSelf: "center", fontWeight: 600}}>Original Images</div>
-              <button type="button" id="processBtn" className="btn btn-primary"
-                disabled={loading}
-                onClick={runProcess}
-              >Detect</button>
-            </div>
-            <div style={{
-              marginBottom: "4em",
-              display: "flex",
-              flexWrap: "wrap",
-            }}>
-              {inputImages.map((img, i) => (
-                <div className="imageDiv" title="Click to remove" onClick={
-                  () => {setInputImages([...inputImages.slice(0,i), ...inputImages.slice(i+1)])}
-                }>
-                  <img id="imageOriginal" alt="" src={img} className="inputImage" key={i}/>
-                </div>
-              ))}
-              <div className="imageDiv" style={{
-                borderRadius: "3em",
-                border: "3px solid #8080806e",
-                textAlign: "center",
-                fontWeight: 800,
-                color: "grey",
-              }}
-                onClick={() => { document.getElementById("imageInput").click(); }}
-              >
-                <div style={{marginTop: "1.8em", fontSize: "6em"}}>+</div>
-              </div>
-            </div>
-            <div style={{
-              position: "absolute",
-              bottom: 0,
-              width: "100%",
-              color: "#868e96",
-              backgroundColor: "rgba(0,0,0,.03)",
-              borderTop: "1px solid rgba(0,0,0,.125)",
-              padding: "0.5em",
-            }}>
-              <input type="file" id="imageInput" name="file" onChange={loadInput}
-                style={{display: "none"}} multiple="multiple"
-              />
-            </div>
-          </div>
+          <ImageSelector
+            loading={loading}
+            inputImages={inputImages}
+            setInputImages={setInputImages}
+            runProcess={runProcess}
+          />
         </div>
         <div style={{ width: "calc(50% - 1em)", marginLeft: "1em", minHeight: "50vh"}}>
           <div className="card">
@@ -202,6 +136,6 @@ const App = () => {
         <canvas id="imageCanvas20b"></canvas>*/}
     </div>
   </>);
-}
+};
 
 export default App;

@@ -3,6 +3,7 @@ import UNITS_DATA from './data.js';
 
 const purl = process.env.PUBLIC_URL;
 //TODO smaller images when checking for corner?
+//TODO try looking for 25 characters?
 
 const END_K = UNITS_DATA.length;
 const progress_step = parseInt(END_K/100);
@@ -43,13 +44,14 @@ const findMatchingCorners = (clean_img, squares, p_width, p_height, corners) => 
   return result;
 };
 
-const processImages = async (setProgress, callback, image_ids) => {
+const processImages = async (setProgress, callback) => {
   const corners = [
     cv.imread('scorner'), cv.imread('dcorner'), cv.imread('qcorner'),
     cv.imread('pcorner'), cv.imread('icorner'), cv.imread('xcorner'),
   ];
 
   // Initial images
+  const image_ids = Array.from(document.getElementsByClassName("fullImage")).map(n => n.id);
   let clean_imgs = image_ids.map(id => {
     let ci = cv.imread(id);
     const full_size = new cv.Size(1080, 1080*ci.rows/ci.cols);
