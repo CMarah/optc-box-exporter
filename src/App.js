@@ -42,6 +42,7 @@ const App = () => {
         <div className="mainPanel">
           <ImageSelector
             loading={loading}
+            setLoading={setLoading}
             inputImages={inputImages}
             setInputImages={setInputImages}
             runProcess={runProcess}
@@ -66,9 +67,12 @@ const App = () => {
                 flexDirection: "column",
                 textAlign: "center",
                 margin: "auto",
+                color: "white",
               }}>
                 <img className="rotating" alt="" src={load_logo}/>
-                {progress <= 100 ? progress : 100}%
+                {progress >= 100 ? "100%" :
+                  progress > 0 ? `${progress}%` : "Reading images..."
+                }
               </div>) : (<div style={{minHeight: "50vh"}}></div>)
             }
           </div>

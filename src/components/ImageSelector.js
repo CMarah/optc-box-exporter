@@ -1,9 +1,10 @@
-import { useRef } from "react";
-import titlebg    from "../titlebg.png";
-import gobg       from "../gobg.png";
+import { useRef, useEffect } from "react";
+import titlebg               from "../titlebg.png";
+import gobg                  from "../gobg.png";
 
 const ImageSelector = ({
   loading,
+  setLoading,
   inputImages,
   setInputImages,
   runProcess,
@@ -18,6 +19,12 @@ const ImageSelector = ({
     }
     setInputImages(inputImages.concat(files));
   };
+
+  useEffect(() => {
+    if (loading) {
+      runProcess();
+    }
+  }, [loading]);
 
   return (
     <div style={{position: "relative"}}>
@@ -38,12 +45,13 @@ const ImageSelector = ({
           margin: "auto",
           textAlign: "center",
           lineHeight: "4em",
-          cursor: "pointer",
+          cursor: loading ? "" : "pointer",
+          opacity: loading ? "0.5" : "1",
           fontSize: "x-large",
           zIndex: "10",
         }}
           disabled={loading}
-          onClick={runProcess}
+          onClick={() => setLoading(true)}
         >GO!</div>
       </div>
       <div style={{
