@@ -54,6 +54,7 @@ const getThumbnailUrl = n => {
   switch (id) {
     case '0742': return basicUrl('f0742-2.png'); break;
     case '3000': return basicUrl('f3000_1.png'); break;
+    case '3111': return 'https://optc-db.github.io/res/sadBandai/character_11762_t1.png'; break;
     case '3333': return 'http://onepiece-treasurecruise.com/en/wp-content/uploads/sites/2/f5013.png'; break;
     case '3334': return 'http://onepiece-treasurecruise.com/en/wp-content/uploads/sites/2/f5014.png'; break;
     case '3339': return 'res/character_10852_t1.png'; break;
