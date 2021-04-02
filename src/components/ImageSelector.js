@@ -45,13 +45,12 @@ const ImageSelector = ({
           margin: "auto",
           textAlign: "center",
           lineHeight: "4em",
-          cursor: loading ? "" : "pointer",
-          opacity: loading ? "0.5" : "1",
+          cursor: loading || !inputImages.length ? "" : "pointer",
+          opacity: loading || !inputImages.length ? "0.5" : "1",
           fontSize: "x-large",
           zIndex: "10",
         }}
-          disabled={loading}
-          onClick={() => (!loading) && setLoading(true)}
+          onClick={() => !loading && inputImages.length && setLoading(true)}
         >GO!</div>
       </div>
       <div style={{
