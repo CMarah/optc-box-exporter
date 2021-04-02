@@ -183,7 +183,8 @@ const processImages = async (setProgress, callback) => {
     id: c.best_score > 0.5 ? c.best : null,
     type: c.type,
     score: c.best_score,
-  })));
+  })))
+    .reduce((acc, g) => acc.concat(g), []);
   target.delete();
   return callback(result);
 };

@@ -5,6 +5,7 @@ import gobg                  from "../images/areas.png";
 const ImageSelector = ({
   loading,
   setLoading,
+  setResults,
   inputImages,
   setInputImages,
   runProcess,
@@ -22,6 +23,7 @@ const ImageSelector = ({
 
   useEffect(() => {
     if (loading) {
+      setResults([]);
       runProcess();
     }
   }, [loading]);

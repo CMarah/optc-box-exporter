@@ -27,14 +27,12 @@ const App = () => {
   const downloadAnchorRef = useRef(null);
 
   const runProcess = () => {
-    setLoading(true);
-    setResults([]);
     processImages(
       setProgress,
       r => {
         setProgress(0);
         setLoading(false);
-        setResults(r.reduce((acc, g) => acc.concat(g), []));
+        setResults(r);
         console.log("Done", r);
       },
     );
@@ -68,6 +66,7 @@ const App = () => {
           <ImageSelector
             loading={loading}
             setLoading={setLoading}
+            setResults={setResults}
             inputImages={inputImages}
             setInputImages={setInputImages}
             runProcess={runProcess}
@@ -86,12 +85,13 @@ const App = () => {
             </div>
           </div>
           <div style={{display: 'flex', flexWrap: 'wrap', marginBottom: '1em'}}>
-            {results.length ?
-              results.map((r, i) => (
+            {results.length ? [...new Set(results.map(c => c.id))]
+              .filter(id => id)
+              .map((id, i) => (
                 <div style={{ width: '20%', textAlign: 'center', marginTop: '1em' }} key={i}>{
-                  r.id && <img key={i} alt="" src={purl + `/portraits/${r.id}.png`}
+                  id && <img key={i} alt="" src={purl + `/portraits/${id}.png`}
                     style={{cursor: "pointer"}}
-                    onClick={()=> window.open(OPTCDB_URL + r.id, "_blank")}
+                    onClick={()=> window.open(OPTCDB_URL + id, "_blank")}
                   />
                 }</div>
               )) : loading ? (<div style={{
