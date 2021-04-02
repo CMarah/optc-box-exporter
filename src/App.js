@@ -120,7 +120,7 @@ const App = () => {
               .map((id, i) => (
                 <div style={{ width: '20%', textAlign: 'center', marginTop: '1em' }} key={i}>{
                   id && <img key={i} alt="" src={purl + `/portraits/${id}.png`}
-                    style={{cursor: "pointer"}}
+                    style={{cursor: "pointer", maxWidth:"100%"}}
                     onClick={()=> window.open(OPTCDB_URL + id, "_blank")}
                   />
                 }</div>
