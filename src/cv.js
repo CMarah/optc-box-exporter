@@ -4,6 +4,7 @@ import UNITS_DATA from './data.js';
 const purl = process.env.PUBLIC_URL;
 //TODO smaller images when checking for corner?
 //TODO try looking for 25 characters?
+//TODO dont crash if no image is found
 
 const END_K = UNITS_DATA.length;
 const progress_step = parseInt(END_K/100);

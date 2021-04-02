@@ -1,11 +1,18 @@
-import { useState }  from "react";
-import UNITS_DATA    from "./data.js";
-import processImages from "./cv.js";
-import bg            from "./bg.png";
-import titlebg       from "./titlebg.png";
-import logo          from "./OPTC_logo.png";
-import load_logo     from "./loading.png";
-import ImageSelector from "./components/ImageSelector";
+import { useState,
+  useRef,
+}                          from "react";
+import UNITS_DATA          from "./data.js";
+import processImages       from "./cv.js";
+import bg                  from "./bg.png";
+import titlebg             from "./titlebg.png";
+import logo                from "./OPTC_logo.png";
+import load_logo           from "./loading.png";
+import ImageSelector       from "./components/ImageSelector";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faSave,
+  faCopy,
+}                          from '@fortawesome/free-solid-svg-icons';
 import "./style.css";
 
 const OPTCDB_URL = "https://optc-db.github.io/characters/#/view/";
@@ -17,6 +24,7 @@ const App = () => {
   const [ results, setResults ]         = useState([]);
   const [ progress, setProgress ]       = useState(0);
   const [ loading, setLoading ]         = useState(false);
+  const downloadAnchorRef = useRef(null);
 
   const runProcess = () => {
     setLoading(true);
@@ -30,6 +38,19 @@ const App = () => {
         console.log("Done", r);
       },
     );
+  };
+
+  const copyResults = () => {
+    navigator.clipboard.writeText(
+      results.map(c => c.id)
+    );
+  };
+
+  const saveResults = () => {
+    const content = results.map(c => c.id);
+    const href = `data:text/plain;charset=utf-8,${encodeURIComponent(content)}`;
+    downloadAnchorRef.current.href = href;
+    downloadAnchorRef.current.click();
   };
 
   return (<>
@@ -49,8 +70,16 @@ const App = () => {
           />
         </div>
         <div className="mainPanel">
-          <div style={{backgroundImage: `url(${titlebg})`}} className="panelTitle">
-            CHARACTERS
+          <div style={{display: "flex", position: "relative"}}>
+            <div style={{backgroundImage: `url(${titlebg})`}} className="panelTitle">
+              CHARACTERS
+            </div>
+            <div className="button" style={{right: "4em"}} onClick={copyResults}>
+              <FontAwesomeIcon icon={faCopy} size="lg"/>
+            </div>
+            <div className="button" onClick={saveResults}>
+              <FontAwesomeIcon icon={faSave} size="lg"/>
+            </div>
           </div>
           <div style={{display: 'flex', flexWrap: 'wrap', marginBottom: '1em'}}>
             {results.length ?
@@ -79,7 +108,8 @@ const App = () => {
         </div>
       </div>
     </div>
-    <div id="hidden_images" style={{display: 'none'}}>
+    <div id="hidden" style={{display: 'none'}}>
+      <a ref={downloadAnchorRef} download="box.txt" href="">Save</a>
       <img id="scorner" src={purl + "/images/scorner.png"} alt=""/>
       <img id="dcorner" src={purl + "/images/dcorner.png"} alt=""/>
       <img id="qcorner" src={purl + "/images/qcorner.png"} alt=""/>
@@ -97,46 +127,6 @@ const App = () => {
       {inputImages.map((img, i) => (
         <img id={`fullImageOriginal${i}`} alt="" src={img} key={i} className="fullImage"/>
       ))}
-      {/*<canvas id="imageCanvas1"></canvas>
-        <canvas id="imageCanvas1b"></canvas><br/>
-        <canvas id="imageCanvas2"></canvas>
-        <canvas id="imageCanvas2b"></canvas><br/>
-        <canvas id="imageCanvas3"></canvas>
-        <canvas id="imageCanvas3b"></canvas><br/>
-        <canvas id="imageCanvas4"></canvas>
-        <canvas id="imageCanvas4b"></canvas><br/>
-        <canvas id="imageCanvas5"></canvas>
-        <canvas id="imageCanvas5b"></canvas><br/>
-        <canvas id="imageCanvas6"></canvas>
-        <canvas id="imageCanvas6b"></canvas><br/>
-        <canvas id="imageCanvas7"></canvas>
-        <canvas id="imageCanvas7b"></canvas><br/>
-        <canvas id="imageCanvas8"></canvas>
-        <canvas id="imageCanvas8b"></canvas><br/>
-        <canvas id="imageCanvas9"></canvas>
-        <canvas id="imageCanvas9b"></canvas><br/>
-        <canvas id="imageCanvas10"></canvas>
-        <canvas id="imageCanvas10b"></canvas><br/>
-        <canvas id="imageCanvas11"></canvas>
-        <canvas id="imageCanvas11b"></canvas><br/>
-        <canvas id="imageCanvas12"></canvas>
-        <canvas id="imageCanvas12b"></canvas><br/>
-        <canvas id="imageCanvas13"></canvas>
-        <canvas id="imageCanvas13b"></canvas><br/>
-        <canvas id="imageCanvas14"></canvas>
-        <canvas id="imageCanvas14b"></canvas><br/>
-        <canvas id="imageCanvas15"></canvas>
-        <canvas id="imageCanvas15b"></canvas><br/>
-        <canvas id="imageCanvas16"></canvas>
-        <canvas id="imageCanvas16b"></canvas><br/>
-        <canvas id="imageCanvas17"></canvas>
-        <canvas id="imageCanvas17b"></canvas><br/>
-        <canvas id="imageCanvas18"></canvas>
-        <canvas id="imageCanvas18b"></canvas><br/>
-        <canvas id="imageCanvas19"></canvas>
-        <canvas id="imageCanvas19b"></canvas><br/>
-        <canvas id="imageCanvas20"></canvas>
-        <canvas id="imageCanvas20b"></canvas>*/}
     </div>
   </>);
 };

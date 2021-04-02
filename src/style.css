@@ -101,3 +101,17 @@
   right: 0;
   margin: auto;
 }
+
+.button {
+  color: white;
+  position: absolute;
+  right: 1em;
+  top: 0.5em;
+  border: 3px solid white;
+  border-radius: 12px;
+  padding: 0.3em;
+  width: 2.5em;
+  height: 2.5em;
+  text-align: center;
+  cursor: pointer;
+}
