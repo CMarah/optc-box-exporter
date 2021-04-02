@@ -1,8 +1,8 @@
 {
   "files": {
-    "main.css": "/optc-box-exporter/static/css/main.9cfc79fd.chunk.css",
-    "main.js": "/optc-box-exporter/static/js/main.34b1a39a.chunk.js",
-    "main.js.map": "/optc-box-exporter/static/js/main.34b1a39a.chunk.js.map",
+    "main.css": "/optc-box-exporter/static/css/main.0e63e32c.chunk.css",
+    "main.js": "/optc-box-exporter/static/js/main.dc482d57.chunk.js",
+    "main.js.map": "/optc-box-exporter/static/js/main.dc482d57.chunk.js.map",
     "runtime-main.js": "/optc-box-exporter/static/js/runtime-main.f961595f.js",
     "runtime-main.js.map": "/optc-box-exporter/static/js/runtime-main.f961595f.js.map",
     "static/js/2.f029040d.chunk.js": "/optc-box-exporter/static/js/2.f029040d.chunk.js",
@@ -10,15 +10,16 @@
     "static/js/3.53dc8465.chunk.js": "/optc-box-exporter/static/js/3.53dc8465.chunk.js",
     "static/js/3.53dc8465.chunk.js.map": "/optc-box-exporter/static/js/3.53dc8465.chunk.js.map",
     "index.html": "/optc-box-exporter/index.html",
-    "static/css/main.9cfc79fd.chunk.css.map": "/optc-box-exporter/static/css/main.9cfc79fd.chunk.css.map",
+    "static/css/main.0e63e32c.chunk.css.map": "/optc-box-exporter/static/css/main.0e63e32c.chunk.css.map",
     "static/js/2.f029040d.chunk.js.LICENSE.txt": "/optc-box-exporter/static/js/2.f029040d.chunk.js.LICENSE.txt",
     "static/media/OPTC_logo.768cdbc0.png": "/optc-box-exporter/static/media/OPTC_logo.768cdbc0.png",
+    "static/media/areas.edc2c622.png": "/optc-box-exporter/static/media/areas.edc2c622.png",
     "static/media/bg.9958cc2a.png": "/optc-box-exporter/static/media/bg.9958cc2a.png"
   },
   "entrypoints": [
     "static/js/runtime-main.f961595f.js",
     "static/js/2.f029040d.chunk.js",
-    "static/css/main.9cfc79fd.chunk.css",
-    "static/js/main.34b1a39a.chunk.js"
+    "static/css/main.0e63e32c.chunk.css",
+    "static/js/main.dc482d57.chunk.js"
   ]
 }
