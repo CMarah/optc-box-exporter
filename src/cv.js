@@ -1,7 +1,6 @@
 /*global cv*/
 import UNITS_DATA from './data.js';
 
-const purl = process.env.PUBLIC_URL;
 //TODO smaller images when checking for corner?
 
 const END_K = UNITS_DATA.length;
@@ -44,6 +43,7 @@ const findMatchingCorners = (clean_img, squares, p_width, p_height, corners) => 
 };
 
 const processImages = async (setProgress, callback) => {
+  console.time("Startup");
   const corners = [
     cv.imread('scorner'), cv.imread('dcorner'), cv.imread('qcorner'),
     cv.imread('pcorner'), cv.imread('icorner'), cv.imread('xcorner'),
@@ -147,47 +147,44 @@ const processImages = async (setProgress, callback) => {
     return res;
   });
   corners.forEach(x => x.delete());
+  console.timeEnd("Startup");
 
   // Idenfify each character_img
-  let compare_img = document.getElementById("compare");
-  let last_img_loaded = 1;
   console.time("Process time");
-  compare_img.onload = () => {
-    console.log("STARTING", last_img_loaded);
-    if (last_img_loaded === END_K) {
-      const result = characters.map(g => g.map(c => ({
-        id: c.best_score > 0.5 ? c.best : null,
-        type: c.type,
-        score: c.best_score,
-      })));
-      console.timeEnd("Process time");
-      return callback(result);
-    }
-    const target_type = Array.isArray(UNITS_DATA[last_img_loaded-1][1]) ?
-      'DUO' : UNITS_DATA[last_img_loaded-1][1];
-    let target = cv.imread('compare');
-    const dsize = new cv.Size(50, 50);
-    cv.resize(target, target, dsize, 0, 0, cv.INTER_AREA);
-    target = target.roi({ x: 7, y: 10, width: 36, height: 32 });
-    characters.forEach((g, i) => {
-      g.forEach(({ img, type, best_score }, j) => {
-        if (type && type !== target_type) return;
-        const result = calcSimilarity(img, target);
-        if (result > best_score) {
-          characters[i][j].best = last_img_loaded;
-          characters[i][j].best_score = result;
-        }
+  let target = null;
+  for (let k = 1; k <= END_K; ++k) {
+    try {
+      const target_type = Array.isArray(UNITS_DATA[k-1][1]) ?
+        'DUO' : UNITS_DATA[k-1][1];
+      target = cv.imread(`compare${k}`);
+      const dsize = new cv.Size(50, 50);
+      cv.resize(target, target, dsize, 0, 0, cv.INTER_AREA);
+      target = target.roi({ x: 7, y: 10, width: 36, height: 32 });
+      characters.forEach((g, i) => {
+        g.forEach(({ img, type, best_score }, j) => {
+          if ((type && type !== target_type) || (best_score > 0.7)) return;
+          const result = calcSimilarity(img, target);
+          if (result > best_score) {
+            characters[i][j].best = k;
+            characters[i][j].best_score = result;
+          }
+        });
       });
-    });
-    target.delete();
-    if (last_img_loaded%progress_step === 0) setProgress(last_img_loaded/progress_step);
-    compare_img.src = purl + `/portraits/${last_img_loaded+1}.png`;
-    last_img_loaded += 1;
-  };
-  compare_img.onerror = () => {
-    compare_img.src = purl + `/portraits/${last_img_loaded+1}.png`;
-    last_img_loaded += 1;
-  };
-  compare_img.src = purl + '/portraits/1.png';
+      if (k%progress_step === 0) {
+        await (new Promise(res => setTimeout(res, 1))); //Allow react to update progress
+        setProgress(k/progress_step);
+      }
+    } catch(err) {
+      console.log("Failed to load image", k);
+    }
+  }
+  console.timeEnd("Process time");
+  const result = characters.map(g => g.map(c => ({
+    id: c.best_score > 0.5 ? c.best : null,
+    type: c.type,
+    score: c.best_score,
+  })));
+  target.delete();
+  return callback(result);
 };
 export default processImages;
