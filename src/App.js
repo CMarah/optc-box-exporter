@@ -57,7 +57,11 @@ const App = () => {
     <div style={{backgroundImage: `url(${bg})`}} className="mainContent">
       <div style={{textAlign: "center", padding: "2em", color: "white"}}>
         <img src={logo} alt=""/>
-        <h1 style={{color: "rgb(254 247 177)"}}>OPTC Box Exporter</h1>
+        <h1 style={{
+          color: "rgb(254 247 177)",
+          textShadow: "3px 3px black",
+          fontWeight: 900,
+        }}>OPTC Box Exporter</h1>
       </div>
       <div className="row">
         <div className="mainPanel">
@@ -74,10 +78,10 @@ const App = () => {
             <div style={{backgroundImage: `url(${titlebg})`}} className="panelTitle">
               CHARACTERS
             </div>
-            <div className="button" style={{right: "4em"}} onClick={copyResults}>
+            <div className="button" style={{right: "4em"}} onClick={copyResults} title="Copy">
               <FontAwesomeIcon icon={faCopy} size="lg"/>
             </div>
-            <div className="button" onClick={saveResults}>
+            <div className="button" onClick={saveResults} title="Save">
               <FontAwesomeIcon icon={faSave} size="lg"/>
             </div>
           </div>

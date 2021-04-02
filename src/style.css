@@ -6,7 +6,7 @@
   padding-right: 15%;
   min-height: 100vh;
   padding-bottom: 5em;
-  font-family: 'Dela Gothic One', cursive;
+  font-family: 'Shanti', sans-serif;
 }
 
 .mainPanel {
@@ -114,4 +114,8 @@
   height: 2.5em;
   text-align: center;
   cursor: pointer;
+}
+
+.gobtn:hover {
+  opacity: 0.8;
 }

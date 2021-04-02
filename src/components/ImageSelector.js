@@ -1,6 +1,6 @@
 import { useRef, useEffect } from "react";
 import titlebg               from "../titlebg.png";
-import gobg                  from "../gobg.png";
+import gobg                  from "../images/areas.png";
 
 const ImageSelector = ({
   loading,
@@ -34,24 +34,32 @@ const ImageSelector = ({
         <div style={{backgroundImage: `url(${titlebg})`}} className="panelTitle">
           SCREENSHOTS
         </div>
-        <div type="button" id="processBtn" style={{
+        <div style={{
           backgroundImage: `url(${gobg})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
+          backgroundSize: "contain",
           position: "absolute",
-          right: "0em",
-          height: "4em",
-          width: "5em",
-          margin: "auto",
-          textAlign: "center",
-          lineHeight: "4em",
+          right: "1em",
+          top: "0.5em",
+          width: "7.8em",
+          height: "2em",
           cursor: loading || !inputImages.length ? "" : "pointer",
-          opacity: loading || !inputImages.length ? "0.5" : "1",
-          fontSize: "x-large",
-          zIndex: "10",
+          opacity: loading || !inputImages.length ? "0.5" : "",
         }}
+          className="gobtn"
           onClick={() => !loading && inputImages.length && setLoading(true)}
-        >GO!</div>
+        >
+          <div style={{
+            backgroundColor: "#ac4d2a",
+            width: "91%",
+            margin: "auto",
+            marginTop: "0.4em",
+            height: "1.26em",
+            textAlign: "center",
+            lineHeight: "1.26em",
+            color: "white",
+            textShadow: "1px 1px black",
+          }}>GO!</div>
+        </div>
       </div>
       <div style={{
         marginBottom: "4em",
