@@ -1,24 +1,24 @@
 {
   "files": {
-    "main.css": "/optc-box-exporter/static/css/main.7c4ab019.chunk.css",
-    "main.js": "/optc-box-exporter/static/js/main.5ae1f1ce.chunk.js",
-    "main.js.map": "/optc-box-exporter/static/js/main.5ae1f1ce.chunk.js.map",
-    "runtime-main.js": "/optc-box-exporter/static/js/runtime-main.319fb17c.js",
-    "runtime-main.js.map": "/optc-box-exporter/static/js/runtime-main.319fb17c.js.map",
-    "static/js/2.9c61c9c1.chunk.js": "/optc-box-exporter/static/js/2.9c61c9c1.chunk.js",
-    "static/js/2.9c61c9c1.chunk.js.map": "/optc-box-exporter/static/js/2.9c61c9c1.chunk.js.map",
-    "static/js/3.19ed76be.chunk.js": "/optc-box-exporter/static/js/3.19ed76be.chunk.js",
-    "static/js/3.19ed76be.chunk.js.map": "/optc-box-exporter/static/js/3.19ed76be.chunk.js.map",
+    "main.css": "/optc-box-exporter/static/css/main.9cfc79fd.chunk.css",
+    "main.js": "/optc-box-exporter/static/js/main.34b1a39a.chunk.js",
+    "main.js.map": "/optc-box-exporter/static/js/main.34b1a39a.chunk.js.map",
+    "runtime-main.js": "/optc-box-exporter/static/js/runtime-main.f961595f.js",
+    "runtime-main.js.map": "/optc-box-exporter/static/js/runtime-main.f961595f.js.map",
+    "static/js/2.f029040d.chunk.js": "/optc-box-exporter/static/js/2.f029040d.chunk.js",
+    "static/js/2.f029040d.chunk.js.map": "/optc-box-exporter/static/js/2.f029040d.chunk.js.map",
+    "static/js/3.53dc8465.chunk.js": "/optc-box-exporter/static/js/3.53dc8465.chunk.js",
+    "static/js/3.53dc8465.chunk.js.map": "/optc-box-exporter/static/js/3.53dc8465.chunk.js.map",
     "index.html": "/optc-box-exporter/index.html",
-    "static/css/main.7c4ab019.chunk.css.map": "/optc-box-exporter/static/css/main.7c4ab019.chunk.css.map",
-    "static/js/2.9c61c9c1.chunk.js.LICENSE.txt": "/optc-box-exporter/static/js/2.9c61c9c1.chunk.js.LICENSE.txt",
+    "static/css/main.9cfc79fd.chunk.css.map": "/optc-box-exporter/static/css/main.9cfc79fd.chunk.css.map",
+    "static/js/2.f029040d.chunk.js.LICENSE.txt": "/optc-box-exporter/static/js/2.f029040d.chunk.js.LICENSE.txt",
     "static/media/OPTC_logo.768cdbc0.png": "/optc-box-exporter/static/media/OPTC_logo.768cdbc0.png",
     "static/media/bg.9958cc2a.png": "/optc-box-exporter/static/media/bg.9958cc2a.png"
   },
   "entrypoints": [
-    "static/js/runtime-main.319fb17c.js",
-    "static/js/2.9c61c9c1.chunk.js",
-    "static/css/main.7c4ab019.chunk.css",
-    "static/js/main.5ae1f1ce.chunk.js"
+    "static/js/runtime-main.f961595f.js",
+    "static/js/2.f029040d.chunk.js",
+    "static/css/main.9cfc79fd.chunk.css",
+    "static/js/main.34b1a39a.chunk.js"
   ]
 }
