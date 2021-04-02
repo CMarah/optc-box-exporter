@@ -7,6 +7,7 @@ import bg                  from "./bg.png";
 import titlebg             from "./titlebg.png";
 import logo                from "./OPTC_logo.png";
 import load_logo           from "./loading.png";
+import filler              from "./images/lang_bg.png";
 import ImageSelector       from "./components/ImageSelector";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -52,6 +53,14 @@ const App = () => {
   };
 
   return (<>
+    <div style={{
+      width: "100%",
+      left: 0,
+      zIndex: 1,
+      background: `url(${filler}) repeat-x`,
+      height: "24px",
+      backgroundPositionY: "-15px",
+    }}></div>
     <div style={{backgroundImage: `url(${bg})`}} className="mainContent">
       <div style={{textAlign: "center", padding: "2em", color: "white"}}>
         <img src={logo} alt=""/>
@@ -132,6 +141,15 @@ const App = () => {
         <img id={`fullImageOriginal${i}`} alt="" src={img} key={i} className="fullImage"/>
       ))}
     </div>
+    <div style={{
+      width: "100%",
+      left: 0,
+      zIndex: 1,
+      background: `url(${filler}) repeat-x`,
+      backgroundPositionY: "-15px",
+      transform: "rotate(180deg)",
+      height: "24px",
+    }}></div>
   </>);
 };
 

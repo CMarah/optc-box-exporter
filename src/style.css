@@ -4,8 +4,8 @@
   background-attachment: fixed;
   padding-left: 15%;
   padding-right: 15%;
-  min-height: 100vh;
   padding-bottom: 5em;
+  min-height: calc(100vh - 48px);
   font-family: 'Shanti', sans-serif;
 }
 
