@@ -21,10 +21,11 @@ const END_K      = UNITS_DATA.length;
 const purl       = process.env.PUBLIC_URL;
 
 const App = () => {
-  const [ inputImages, setInputImages ] = useState([]);
-  const [ results, setResults ]         = useState([]);
-  const [ progress, setProgress ]       = useState(0);
-  const [ loading, setLoading ]         = useState(false);
+  const [ inputImages, setInputImages ]         = useState([]);
+  const [ loadedLastImage, setLoadedLastImage ] = useState(false);
+  const [ results, setResults ]                 = useState([]);
+  const [ progress, setProgress ]               = useState(0);
+  const [ loading, setLoading ]                 = useState(false);
   const downloadAnchorRef = useRef(null);
 
   const runProcess = () => {
@@ -79,6 +80,7 @@ const App = () => {
             inputImages={inputImages}
             setInputImages={setInputImages}
             runProcess={runProcess}
+            loadedLastImage={loadedLastImage}
           />
         </div>
         <div className="mainPanel">
@@ -129,14 +131,14 @@ const App = () => {
       <img id="pcorner" src={purl + "/images/pcorner.png"} alt=""/>
       <img id="icorner" src={purl + "/images/icorner.png"} alt=""/>
       <img id="xcorner" src={purl + "/images/xcorner.png"} alt=""/>
-      <ul id="compares">
-        <img id="compare" alt=""/>
+      <div>
         {(new Array(END_K)).fill(0).map((x,k) => (
           <img id={`compare${k+1}`} key={k} style={{display: "none"}} alt=""
             src={purl + `/portraits/${k+1}.png`}
+            onLoad={() => k === (END_K-1) && setLoadedLastImage(true)}
           />
         ))}
-      </ul>
+      </div>
       {inputImages.map((img, i) => (
         <img id={`fullImageOriginal${i}`} alt="" src={img} key={i} className="fullImage"/>
       ))}
