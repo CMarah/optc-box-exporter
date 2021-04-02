@@ -27,6 +27,7 @@ const App = () => {
   const [ progress, setProgress ]               = useState(0);
   const [ loading, setLoading ]                 = useState(false);
   const downloadAnchorRef = useRef(null);
+  const copiedRef         = useRef(null);
 
   const runProcess = () => {
     processImages(
@@ -41,9 +42,15 @@ const App = () => {
   };
 
   const copyResults = () => {
+    copiedRef.current.style.transition = '0.1s';
+    copiedRef.current.style.opacity = 1;
     navigator.clipboard.writeText(
       results.map(c => c.id)
     );
+    setTimeout(() => {
+      copiedRef.current.style.transition = '0.4s';
+      copiedRef.current.style.opacity = 0;
+    }, 600);
   };
 
   const saveResults = () => {
@@ -88,6 +95,18 @@ const App = () => {
             <div style={{backgroundImage: `url(${titlebg})`}} className="panelTitle">
               CHARACTERS
             </div>
+            <div ref={copiedRef} style={{
+              opacity: 0,
+              color: "red",
+              background: "grey",
+              borderRadius: "0.2em",
+              position: "absolute",
+              right: "3em",
+              top: "3em",
+              padding: "0.5em",
+              color: "white",
+              zIndex: "20",
+            }}>Copied!</div>
             <div className="button" style={{right: "4em"}} onClick={copyResults} title="Copy">
               <FontAwesomeIcon icon={faCopy} size="lg"/>
             </div>
