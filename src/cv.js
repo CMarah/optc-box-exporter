@@ -14,13 +14,10 @@ const matToBuffer = mat => !mat ? null : ({
 
 const processImages = async (setProgress, callback) => {
   console.time("Startup");
-  console.time("a");
   const corners = [
     cv.imread('scorner'), cv.imread('dcorner'), cv.imread('qcorner'),
     cv.imread('pcorner'), cv.imread('icorner'), cv.imread('xcorner'),
   ];
-  console.timeEnd("a");
-  console.time("b");
   const image_ids = Array.from(document.getElementsByClassName("fullImage")).map(n => n.id);
   let clean_imgs = image_ids.map(id => {
     let ci = cv.imread(id);
@@ -35,7 +32,6 @@ const processImages = async (setProgress, callback) => {
     ci.delete();
     return res;
   });
-  console.timeEnd("b");
   const basics = {
     corners: corners.map(matToBuffer),
     clean_imgs: clean_imgs.map(matToBuffer),

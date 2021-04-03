@@ -45,6 +45,7 @@ const findMatchingCorners = (clean_img, squares, p_width, p_height, corners) => 
 let corners = [];
 let clean_imgs = [];
 let targets = [];
+let characters = [];
 
 const bufferToMat = b => !b ? null : cv.matFromArray(b.rows, b.cols, 24, b.data);
 
@@ -54,11 +55,9 @@ onmessage = ({ data }) => {
     corners = cs.corners.map(bufferToMat);
     clean_imgs = cs.clean_imgs.map(bufferToMat);
     console.log("SETTING", corners, clean_imgs[0].rows);
-  } else if (data.type === "new_targets") {
-    targets.push(...data.new_targets.map(bufferToMat));
-  } else {
+
     // Initial images
-    const characters = clean_imgs.map(ci => {
+    characters = clean_imgs.map(ci => {
       // Draw white squares around chars
       let hlines = new cv.Mat();
       let vlines = new cv.Mat();
@@ -140,8 +139,9 @@ onmessage = ({ data }) => {
       ci.delete();
       return res;
     });
-    corners.forEach(x => x.delete());
-
+  } else if (data.type === "new_targets") {
+    targets.push(...data.new_targets.map(bufferToMat));
+  } else {
     // Idenfify each character_img
     console.time("Process time");
     let target = null;
