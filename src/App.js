@@ -2,7 +2,7 @@ import { useState,
   useRef,
 }                          from "react";
 import UNITS_DATA          from "./data.js";
-import processImages       from "./cv.js";
+import { processImages }   from "./cv.js";
 import bg                  from "./bg.png";
 import titlebg             from "./titlebg.png";
 import logo                from "./OPTC_logo.png";
@@ -97,7 +97,6 @@ const App = () => {
             </div>
             <div ref={copiedRef} style={{
               opacity: 0,
-              color: "red",
               background: "grey",
               borderRadius: "0.2em",
               position: "absolute",
@@ -143,7 +142,7 @@ const App = () => {
       </div>
     </div>
     <div id="hidden" style={{display: 'none'}}>
-      <a ref={downloadAnchorRef} download="box.txt" href="">Save</a>
+      <a ref={downloadAnchorRef} download="box.txt" href="/">Save</a>
       <img id="scorner" src={purl + "/images/scorner.png"} alt=""/>
       <img id="dcorner" src={purl + "/images/dcorner.png"} alt=""/>
       <img id="qcorner" src={purl + "/images/qcorner.png"} alt=""/>
@@ -153,7 +152,7 @@ const App = () => {
       <div>
         {(new Array(END_K)).fill(0).map((x,k) => (
           <img id={`compare${k+1}`} key={k} style={{display: "none"}} alt=""
-            src={purl + `/portraits/${k+1}.png`}
+            src={purl + `/sp/${k+1}.png`}
             onLoad={() => k === (END_K-1) && setLoadedLastImage(true)}
           />
         ))}
