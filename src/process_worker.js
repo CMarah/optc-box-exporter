@@ -23,7 +23,7 @@ const findMatchingCorners = (clean_img, squares, p_width, p_height, corners) => 
   const result = squares.map((sq, i) => {
     const image = clean_img.roi({
       x: 40 + (i%5)*p_width,
-      y: squares[0].y - 70 + parseInt(i/5)*p_height,
+      y: Math.max(squares[5].y - 70 - p_height + parseInt(i/5)*p_height, 0),
       width: p_width,
       height: p_height,
     });
@@ -32,8 +32,8 @@ const findMatchingCorners = (clean_img, squares, p_width, p_height, corners) => 
       const result_d = cv.minMaxLoc(corner_dst, mask);
       if (result_d.maxVal > 0.9) return {
         type: ['STR', 'DEX', 'QCK', 'PSY', 'INT', 'DUO'][cn],
-        starting_y: squares[0].y - 70 + result_d.maxLoc.y -
-          [30, 28, 30, 31, 30, 23][cn],
+        starting_y: (squares[5].y - p_height)
+          -70 + result_d.maxLoc.y - [30, 28, 30, 31, 30, 23][cn],
       }
     }
     return null;
@@ -54,7 +54,6 @@ onmessage = ({ data }) => {
     const { cs } = data;
     corners = cs.corners.map(bufferToMat);
     clean_imgs = cs.clean_imgs.map(bufferToMat);
-    console.log("SETTING", corners, clean_imgs[0].rows);
 
     // Initial images
     characters = clean_imgs.map(ci => {
@@ -67,7 +66,6 @@ onmessage = ({ data }) => {
       cv.Canny(copy_1, copy_1, 50, 200, 3);
       cv.HoughLines(copy_1, hlines, 1, Math.PI/180, 500, 0, 0, Math.PI/2, Math.PI/2+0.1);
       cv.HoughLines(copy_1, vlines, 1, Math.PI/180, 500, 0, 0, 0, 0.01);
-      console.log(hlines.rows, vlines.rows);
       for (let i = 0; i < (hlines.rows + vlines.rows); ++i) {
         const rho = i < hlines.rows ?
           hlines.data32F[i * 2] :
@@ -167,6 +165,7 @@ onmessage = ({ data }) => {
       }
     }
     console.timeEnd("Process time");
+    console.log(characters);
     const result = characters.map(g => g.map(c => ({
       id: c.best_score > 0.5 ? c.best : null,
       type: c.type,

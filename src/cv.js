@@ -39,7 +39,7 @@ const processImages = async (setProgress, callback) => {
   instance.postMessage({ type: "basics", cs: basics });
   console.time("c");
   for (let k = 1; k <= END_K; ++k) {
-    console.log(k);
+    if (k%100 === 0) console.log(k);
     if (!targets[k-1]) {
       try {
         targets[k-1] = matToBuffer(cv.imread(`compare${k}`));
