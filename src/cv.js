@@ -18,6 +18,7 @@ const processImages = async (setProgress, callback) => {
     cv.imread('scorner'), cv.imread('dcorner'), cv.imread('qcorner'),
     cv.imread('pcorner'), cv.imread('icorner'), cv.imread('xcorner'),
   ];
+  console.time("b");
   const image_ids = Array.from(document.getElementsByClassName("fullImage")).map(n => n.id);
   let clean_imgs = image_ids.map(id => {
     let ci = cv.imread(id);
@@ -32,6 +33,7 @@ const processImages = async (setProgress, callback) => {
     ci.delete();
     return res;
   });
+  console.timeEnd("b");
   const basics = {
     corners: corners.map(matToBuffer),
     clean_imgs: clean_imgs.map(matToBuffer),
@@ -49,17 +51,17 @@ const processImages = async (setProgress, callback) => {
     }
   }
   console.timeEnd("c");
-  console.log("t", targets);
   console.timeEnd("Startup");
   instance.postMessage({ type: "new_targets", new_targets: targets });
   instance.postMessage({ type: "start" });
-
 
   instance.onmessage = ({ data }) => {
     if (data.type === "result") {
       return callback(data.result);
     } else if (data.type === "progress") {
-      setProgress(data.progress);
+      setProgress(`Identifying characters: ${Math.min(data.progress, 100)}%`);
+    } else if (data.type === "starting image") {
+      setProgress(`Reading images: ${data.progress+1}/${clean_imgs.length}`);
     }
   };
 };

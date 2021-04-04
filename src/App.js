@@ -2,7 +2,9 @@ import { useState,
   useRef,
 }                          from "react";
 import UNITS_DATA          from "./data.js";
-import { processImages }   from "./cv.js";
+import {
+  processImages,
+}                          from "./cv.js";
 import bg                  from "./bg.png";
 import titlebg             from "./titlebg.png";
 import logo                from "./OPTC_logo.png";
@@ -24,7 +26,7 @@ const App = () => {
   const [ inputImages, setInputImages ]         = useState([]);
   const [ loadedLastImage, setLoadedLastImage ] = useState(false);
   const [ results, setResults ]                 = useState([]);
-  const [ progress, setProgress ]               = useState(0);
+  const [ progress, setProgress ]               = useState("Initializing...");
   const [ loading, setLoading ]                 = useState(false);
   const downloadAnchorRef = useRef(null);
   const copiedRef         = useRef(null);
@@ -33,10 +35,9 @@ const App = () => {
     processImages(
       setProgress,
       r => {
-        setProgress(0);
+        setProgress("Loading assets...");
         setLoading(false);
         setResults(r);
-        console.log("Done", r);
       },
     );
   };
@@ -131,10 +132,10 @@ const App = () => {
                 margin: "auto",
                 color: "white",
               }}>
-                <img className="rotating" alt="" src={load_logo}/>
-                {progress >= 100 ? "100%" :
-                  progress > 0 ? `${progress}%` : "Reading images..."
-                }
+                <div style={{height: "10em"}}>
+                  <img className="rotating" alt="" src={load_logo}/>
+                </div>
+                {progress}
               </div>) : (<div style={{minHeight: "50vh"}}></div>)
             }
           </div>
@@ -152,8 +153,10 @@ const App = () => {
       <div>
         {(new Array(END_K)).fill(0).map((x,k) => (
           <img id={`compare${k+1}`} key={k} style={{display: "none"}} alt=""
-            src={purl + `/sp/${k+1}.png`}
-            onLoad={() => k === (END_K-1) && setLoadedLastImage(true)}
+            src={purl + `/sp/${k+1}.png`} className="compare"
+            onLoad={() => {
+              if (k === (END_K-1)) setLoadedLastImage(true)
+            }}
           />
         ))}
       </div>

@@ -56,7 +56,8 @@ onmessage = ({ data }) => {
     clean_imgs = cs.clean_imgs.map(bufferToMat);
 
     // Initial images
-    characters = clean_imgs.map(ci => {
+    characters = clean_imgs.map((ci, i) => {
+      postMessage({ type: "starting image", progress: i });
       // Draw white squares around chars
       let hlines = new cv.Mat();
       let vlines = new cv.Mat();
