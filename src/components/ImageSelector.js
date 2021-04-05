@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef }            from "react";
 import titlebg               from "../titlebg.png";
 import gobg                  from "../images/areas.png";
 
@@ -22,13 +22,6 @@ const ImageSelector = ({
     setInputImages(inputImages.concat(files));
   };
 
-  useEffect(() => {
-    if (loading) {
-      setResults([]);
-      runProcess();
-    }
-  }, [loading]);
-
   return (
     <div style={{position: "relative"}}>
       <div style={{
@@ -49,7 +42,13 @@ const ImageSelector = ({
           opacity: (!loading && inputImages.length && loadedLastImage) ? "" : "0.5",
         }}
           className="gobtn"
-          onClick={() => !loading && inputImages.length && setLoading(true)}
+          onClick={() => {
+            if (!loading && inputImages.length) {
+              setLoading(true);
+              setResults([]);
+              runProcess();
+            }
+          }}
         >
           <div style={{
             backgroundColor: "#ac4d2a",
