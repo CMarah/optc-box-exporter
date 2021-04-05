@@ -2,6 +2,7 @@ import UNITS_DATA from './data.js';
 /*global importScripts*/
 importScripts("/optc-box-exporter/opencv.js");
 /*global cv*/
+const purl = process.env.PUBLIC_URL;
 
 const END_K = UNITS_DATA.length;
 const progress_step = parseInt(END_K/100);
@@ -42,21 +43,56 @@ const findMatchingCorners = (clean_img, squares, p_width, p_height, corners) => 
   return result;
 };
 
-let corners = [];
-let clean_imgs = [];
-let targets = [];
-let characters = [];
+const urlToMat = (width, height, url) => {
+  return fetch(url, { mode: "cors" })
+    .then(res => res.blob())
+    .then(blob => createImageBitmap(blob, {
+      premultiplyAlpha: 'none',
+      colorSpaceConversion: 'none',
+    }))
+    .then(bitmap => {
+      const test = new OffscreenCanvas(width, height);
+      const ctx = test.getContext('2d');
+      ctx.drawImage(bitmap, 0, 0, width, height);
+      const image_data = ctx.getImageData(0, 0, width, height);
+      return cv.matFromImageData(image_data);
+    })
+    .catch(err => null);
+};
+
+const corners_promise = [
+  [15, 24, purl + "/images/scorner.png"],
+  [20, 25, purl + "/images/dcorner.png"],
+  [24, 20, purl + "/images/qcorner.png"],
+  [27, 23, purl + "/images/pcorner.png"],
+  [23, 24, purl + "/images/icorner.png"],
+  [24, 29, purl + "/images/xcorner.png"],
+].map(x => urlToMat(...x));
+const chunkedPromise = async (chunks, block_size) => {
+  const block_results = await Promise.all(chunks.slice(0, block_size).map(x => x()));
+  if (chunks.length < block_size) return block_results;
+  const remaining = await chunkedPromise(chunks.slice(block_size), block_size);
+  return [
+    ...block_results,
+    ...remaining,
+  ];
+};
+const targets_promise = chunkedPromise(
+  (new Array(END_K)).fill(0)
+    .map((_, i) => ([36, 32, purl + `/sp/${i+1}.png`]))
+    .map(x => (() => urlToMat(...x))),
+  200,
+);
 
 const bufferToMat = b => !b ? null : cv.matFromArray(b.rows, b.cols, 24, b.data);
 
-onmessage = ({ data }) => {
-  if (data.type === "basics") {
-    const { cs } = data;
-    corners = cs.corners.map(bufferToMat);
-    clean_imgs = cs.clean_imgs.map(bufferToMat);
+onmessage = async ({ data }) => {
+  if (data.type === "start") {
+    const corners = await Promise.all(corners_promise);
+    const clean_imgs = data.clean_imgs.map(bufferToMat);
 
     // Initial images
-    characters = clean_imgs.map((ci, i) => {
+    let characters = clean_imgs.map((ci, i) => {
       postMessage({ type: "starting image", progress: i });
       // Draw white squares around chars
       let hlines = new cv.Mat();
@@ -138,11 +174,11 @@ onmessage = ({ data }) => {
       ci.delete();
       return res;
     });
-  } else if (data.type === "new_targets") {
-    targets.push(...data.new_targets.map(bufferToMat));
-  } else {
+
     // Idenfify each character_img
     console.time("Process time");
+    const targets = await targets_promise;
+    console.log("T", targets);
     let target = null;
     for (let k = 1; k <= targets.length; ++k) {
       try {
