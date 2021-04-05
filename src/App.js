@@ -115,6 +115,13 @@ const App = () => {
             </div>
           </div>
           <div style={{display: 'flex', flexWrap: 'wrap', marginBottom: '1em'}}>
+            <div style={{width: "100%", color: "white", textAlign: "center"}}>
+              {results.length ? `Found
+                ${new Set(results.map(c => c.id).filter(id => id)).size}
+                unique characters,
+                ${results.length - new Set(results.map(c => c.id)).size} duplicates.
+              ` : ""}
+            </div>
             {results.length ? [...new Set(results.map(c => c.id))]
               .filter(id => id)
               .map((id, i) => (
