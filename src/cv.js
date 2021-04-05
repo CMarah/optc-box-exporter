@@ -9,7 +9,6 @@ const matToBuffer = mat => !mat ? null : ({
 });
 
 const processImages = async (setProgress, callback) => {
-  console.time("b");
   const image_ids = Array.from(document.getElementsByClassName("fullImage")).map(n => n.id);
   let cimgs = image_ids.map(id => {
     let ci = cv.imread(id);
@@ -24,10 +23,8 @@ const processImages = async (setProgress, callback) => {
     ci.delete();
     return res;
   });
-  console.timeEnd("b");
   const clean_imgs = cimgs.map(matToBuffer);
   instance.postMessage({ type: "start", clean_imgs });
-
   instance.onmessage = ({ data }) => {
     if (data.type === "result") {
       return callback(data.result);

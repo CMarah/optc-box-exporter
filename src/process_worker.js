@@ -68,6 +68,7 @@ const corners_promise = [
   [23, 24, purl + "/images/icorner.png"],
   [24, 29, purl + "/images/xcorner.png"],
 ].map(x => urlToMat(...x));
+
 const chunkedPromise = async (chunks, block_size) => {
   const block_results = await Promise.all(chunks.slice(0, block_size).map(x => x()));
   if (chunks.length < block_size) return block_results;
@@ -156,12 +157,7 @@ onmessage = async ({ data }) => {
         });
         const dsize = new cv.Size(50, 50);
         cv.resize(full_image, full_image, dsize, 0, 0, cv.INTER_AREA);
-        const res = full_image.roi({
-          x: 7,
-          y: 10,
-          width: 36,
-          height: 32,
-        });
+        const res = full_image.roi({ x: 7, y: 10, width: 36, height: 32 });
         full_image.delete();
         return res;
       });
@@ -179,28 +175,24 @@ onmessage = async ({ data }) => {
     console.time("Process time");
     const targets = await targets_promise;
     console.log("T", targets);
-    let target = null;
-    for (let k = 1; k <= targets.length; ++k) {
-      try {
-        const target_type = Array.isArray(UNITS_DATA[k-1][1]) ?
-          'DUO' : UNITS_DATA[k-1][1];
-        target = targets[k-1];
-        characters.forEach((g, i) => {
-          g.forEach(({ img, type, best_score }, j) => {
-            if ((type && type !== target_type) || (best_score > 0.7)) return;
-            const result = calcSimilarity(img, target);
-            if (result > best_score) {
-              characters[i][j].best = k;
-              characters[i][j].best_score = result;
-            }
-          });
+    targets.forEach((target, k) => {
+      if (!target) return;
+      const target_type = Array.isArray(UNITS_DATA[k][1]) ?
+        'DUO' : UNITS_DATA[k][1];
+      characters.forEach((g, i) => {
+        g.forEach(({ img, type, best_score }, j) => {
+          if ((type && type !== target_type) || (best_score > 0.7)) return;
+          const result = calcSimilarity(img, target);
+          if (result > best_score) {
+            characters[i][j].best = k + 1;
+            characters[i][j].best_score = result;
+          }
         });
-        if (k%progress_step === 0) {
-          postMessage({ type: "progress", progress: k/progress_step });
-        }
-      } catch(err) {
+      });
+      if (k%progress_step === 0) {
+        postMessage({ type: "progress", progress: k/progress_step });
       }
-    }
+    });
     console.timeEnd("Process time");
     console.log(characters);
     const result = characters.map(g => g.map(c => ({
