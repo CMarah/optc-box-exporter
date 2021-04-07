@@ -9,7 +9,6 @@ const ImageSelector = ({
   inputImages,
   setInputImages,
   runProcess,
-  loadedLastImage,
 }) => {
   const fileInputEl = useRef(null);
 
@@ -38,8 +37,8 @@ const ImageSelector = ({
           top: "0.5em",
           width: "7.8em",
           height: "2em",
-          cursor: (!loading && inputImages.length && loadedLastImage) ? "pointer" : "",
-          opacity: (!loading && inputImages.length && loadedLastImage) ? "" : "0.5",
+          cursor: (!loading && inputImages.length) ? "pointer" : "",
+          opacity: (!loading && inputImages.length) ? "" : "0.5",
         }}
           className="gobtn"
           onClick={() => {
@@ -60,7 +59,7 @@ const ImageSelector = ({
             lineHeight: "1.26em",
             color: "white",
             textShadow: "1px 1px black",
-          }}>{loadedLastImage ? "GO!" : "Loading..."}</div>
+          }}>{"GO!"}</div>
         </div>
       </div>
       <div style={{

@@ -4890,7 +4890,7 @@ const relevant_ids = [
   3381,
   3382,
   3383
-];
+].reverse();
 const relevant = relevant_ids
   .map(id => ([ id, ...UNITS_DATA[id-1]]));
 

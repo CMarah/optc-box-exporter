@@ -1,4 +1,4 @@
-const asd = {
+const base = {
   '1': 2,
   '2': 3,
   '3': 4,
@@ -1251,8 +1251,10 @@ const asd = {
   '3371': 3372
 };
 
-const evolutions =Object.entries(asd).reduce(
+const evolutions =Object.entries(base).reduce(
   (acc, [key, value]) => { acc[key] = value; return acc; }, []
 );
 
-module.exports = evolutions;
+export {
+  evolutions,
+}

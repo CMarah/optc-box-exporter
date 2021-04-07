@@ -1,13 +1,14 @@
-import { useState,
+import {
+  useState,
   useRef,
+  useEffect,
 }                          from "react";
 import {
   UNITS_DATA,
   relevant,
 }                          from "./data.js";
-import {
-  processImages,
-}                          from "./cv.js";
+import { evolutions }      from "./evolutions.js";
+import { processImages }   from "./cv.js";
 import bg                  from "./bg.png";
 import titlebg             from "./titlebg.png";
 import logo                from "./OPTC_logo.png";
@@ -22,24 +23,29 @@ import {
 import "./style.css";
 
 const OPTCDB_URL = "https://optc-db.github.io/characters/#/view/";
-const END_K      = UNITS_DATA.length;
 const purl       = process.env.PUBLIC_URL;
-
 const types = ["STR", "DEX", "QCK", "PSY", "INT"];
 const relevant_by_type = [-1, 0, 1, 2, 3, 4, 5].map(
   tn => relevant.filter(u => tn === types.findIndex(t => t === u[2]))
 );
 
 const App = () => {
-  const [ box, setBox ]                         = useState([]);
-  const [ display_box, setDisplayBox ]          = useState(false);
+  const [ box, setBox ]                         = useState(
+    !localStorage.getItem("optc-box") ? [] :
+      localStorage.getItem("optc-box").split(",").map(id => parseInt(id))
+  );
+  const [ display_box, setDisplayBox ]          = useState(true);
   const [ inputImages, setInputImages ]         = useState([]);
-  const [ loadedLastImage, setLoadedLastImage ] = useState(false);
   const [ results, setResults ]                 = useState([]);
   const [ progress, setProgress ]               = useState("Initializing...");
   const [ loading, setLoading ]                 = useState(false);
   const downloadAnchorRef = useRef(null);
   const copiedRef         = useRef(null);
+
+  useEffect(() => {
+    console.log("SAVE BOX");
+    localStorage.setItem("optc-box", box);
+  }, [box]);
 
   const runProcess = () => {
     processImages(
@@ -72,6 +78,10 @@ const App = () => {
     downloadAnchorRef.current.click();
   };
 
+  const havePreevolution = id => {
+    return box.some(id_b => evolutions[id_b] === id);
+  };
+
   return (<>
     <div style={{
       width: "100%",
@@ -88,9 +98,36 @@ const App = () => {
           color: "rgb(254 247 177)",
           textShadow: "3px 3px black",
           fontWeight: 900,
-        }}>OPTC Box Exporter</h1>
+        }}>OPTC Box Manager</h1>
       </div>
-      <div style={{display: "flex"}}>
+      {display_box ? relevant_by_type.map(g => (
+        <div className="grid">
+          {g
+            .filter(x => [5,"5+",6,"6+"].includes(x[4]))
+            .map((x, k) => {
+              return (
+                <div style={{
+                  cursor: "pointer",
+                  opacity: box.includes(x[0]) ? 1 : 0.5,
+                  position: "relative",
+                }}
+                  onClick={()=> {
+                    setBox(box.includes(x[0]) ?
+                      box.filter(id => id !== x[0]) :
+                      box.concat(x[0])
+                    )
+                  }}
+                >
+                  <div className="frame"
+                    style={{border: !box.includes(x[0]) && havePreevolution(x[0]) && "5px solid cyan"}}
+                  ></div>
+                  <img key={k} src={purl + `/portraits/${x[0]}.png`} alt=""/>
+                </div>
+              );
+            })
+          }
+        </div>
+      )) : (<div style={{display: "flex"}}>
         <div className="mainPanel" style={{marginRight: "1em", marginLeft: "15%"}}>
           <ImageSelector
             loading={loading}
@@ -99,7 +136,6 @@ const App = () => {
             inputImages={inputImages}
             setInputImages={setInputImages}
             runProcess={runProcess}
-            loadedLastImage={loadedLastImage}
           />
         </div>
         <div className="mainPanel" style={{marginLeft: "1em", marginRight: "15%"}}>
@@ -158,51 +194,10 @@ const App = () => {
             }
           </div>
         </div>
-      </div>
-      {display_box && relevant_by_type.map(g => (
-        <div style={{display: "flex", flexWrap: "wrap" }}>
-          {g
-            .filter(x => [5,"5+",6,"6+"].includes(x[4]))
-            .map((x, k) => {
-              return (
-                <div style={{
-                  margin: "0.3em",
-                  cursor: "pointer",
-                  opacity: box.includes(x[0]) ? 1 : 0.5,
-                }}
-                  onClick={()=> {
-                    setBox(box.includes(x[0]) ?
-                      box.filter(id => id !== x[0]) :
-                      box.concat(x[0])
-                    )
-                  }}
-                >
-                  <img key={k} src={purl + `/portraits/${x[0]}.png`} alt=""/>
-                </div>
-              );
-            })
-          }
-        </div>
-      ))}
+      </div>)}
     </div>
     <div id="hidden" style={{display: 'none'}}>
       <a ref={downloadAnchorRef} download="box.txt" href="/">Save</a>
-      <img id="scorner" src={purl + "/images/scorner.png"} alt=""/>
-      <img id="dcorner" src={purl + "/images/dcorner.png"} alt=""/>
-      <img id="qcorner" src={purl + "/images/qcorner.png"} alt=""/>
-      <img id="pcorner" src={purl + "/images/pcorner.png"} alt=""/>
-      <img id="icorner" src={purl + "/images/icorner.png"} alt=""/>
-      <img id="xcorner" src={purl + "/images/xcorner.png"} alt=""/>
-      <div>
-        {(new Array(END_K)).fill(0).map((x,k) => (
-          <img id={`compare${k+1}`} key={k} style={{display: "none"}} alt=""
-            src={purl + `/sp/${k+1}.png`} className="compare"
-            onLoad={() => {
-              if (k === (END_K-1)) setLoadedLastImage(true)
-            }}
-          />
-        ))}
-      </div>
       {inputImages.map((img, i) => (
         <img id={`fullImageOriginal${i}`} alt="" src={img} key={i} className="fullImage"/>
       ))}
