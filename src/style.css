@@ -2,16 +2,13 @@
   background-size: cover;
   background-repeat: no-repeat;
   background-attachment: fixed;
-  padding-left: 15%;
-  padding-right: 15%;
   padding-bottom: 5em;
   min-height: calc(100vh - 48px);
   font-family: 'Shanti', sans-serif;
 }
 
 .mainPanel {
-  width: calc(50% - 1em);
-  margin-left: 1em;
+  width: calc(35% - 1em);
   min-height: 50vh;
   background: rgb(36, 28, 21);
   border: 3px solid #ab8002;

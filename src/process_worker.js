@@ -1,4 +1,4 @@
-import UNITS_DATA from './data.js';
+import { UNITS_DATA } from './data.js';
 /*global importScripts*/
 importScripts("/optc-box-exporter/opencv.js");
 /*global cv*/

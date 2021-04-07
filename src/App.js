@@ -1,7 +1,10 @@
 import { useState,
   useRef,
 }                          from "react";
-import UNITS_DATA          from "./data.js";
+import {
+  UNITS_DATA,
+  relevant,
+}                          from "./data.js";
 import {
   processImages,
 }                          from "./cv.js";
@@ -22,7 +25,14 @@ const OPTCDB_URL = "https://optc-db.github.io/characters/#/view/";
 const END_K      = UNITS_DATA.length;
 const purl       = process.env.PUBLIC_URL;
 
+const types = ["STR", "DEX", "QCK", "PSY", "INT"];
+const relevant_by_type = [-1, 0, 1, 2, 3, 4, 5].map(
+  tn => relevant.filter(u => tn === types.findIndex(t => t === u[2]))
+);
+
 const App = () => {
+  const [ box, setBox ]                         = useState([]);
+  const [ display_box, setDisplayBox ]          = useState(false);
   const [ inputImages, setInputImages ]         = useState([]);
   const [ loadedLastImage, setLoadedLastImage ] = useState(false);
   const [ results, setResults ]                 = useState([]);
@@ -38,6 +48,7 @@ const App = () => {
         setProgress("Loading assets...");
         setLoading(false);
         setResults(r);
+        setBox(r.map(c => c.id));
       },
     );
   };
@@ -79,8 +90,8 @@ const App = () => {
           fontWeight: 900,
         }}>OPTC Box Exporter</h1>
       </div>
-      <div className="row">
-        <div className="mainPanel">
+      <div style={{display: "flex"}}>
+        <div className="mainPanel" style={{marginRight: "1em", marginLeft: "15%"}}>
           <ImageSelector
             loading={loading}
             setLoading={setLoading}
@@ -91,7 +102,7 @@ const App = () => {
             loadedLastImage={loadedLastImage}
           />
         </div>
-        <div className="mainPanel">
+        <div className="mainPanel" style={{marginLeft: "1em", marginRight: "15%"}}>
           <div style={{display: "flex", position: "relative"}}>
             <div style={{backgroundImage: `url(${titlebg})`}} className="panelTitle">
               CHARACTERS
@@ -148,6 +159,31 @@ const App = () => {
           </div>
         </div>
       </div>
+      {display_box && relevant_by_type.map(g => (
+        <div style={{display: "flex", flexWrap: "wrap" }}>
+          {g
+            .filter(x => [5,"5+",6,"6+"].includes(x[4]))
+            .map((x, k) => {
+              return (
+                <div style={{
+                  margin: "0.3em",
+                  cursor: "pointer",
+                  opacity: box.includes(x[0]) ? 1 : 0.5,
+                }}
+                  onClick={()=> {
+                    setBox(box.includes(x[0]) ?
+                      box.filter(id => id !== x[0]) :
+                      box.concat(x[0])
+                    )
+                  }}
+                >
+                  <img key={k} src={purl + `/portraits/${x[0]}.png`} alt=""/>
+                </div>
+              );
+            })
+          }
+        </div>
+      ))}
     </div>
     <div id="hidden" style={{display: 'none'}}>
       <a ref={downloadAnchorRef} download="box.txt" href="/">Save</a>
