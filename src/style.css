@@ -1,18 +1,47 @@
-.mainContent {
+body {
+  background-image: url("./images/sky.jpg");
   background-size: cover;
   background-repeat: no-repeat;
   background-attachment: fixed;
+  font-family: 'Shanti', sans-serif;
+  position: relative;
+}
+
+.header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  left: 0;
+  z-index: 1;
+  background: url("./images/lang_bg.png") repeat-x;
+  height: 24px;
+  background-position-y: -15px;
+}
+
+.footer {
+  position: fixed;
+  width: 100%;
+  left: 0;
+  bottom: 0;
+  z-index: 1;
+  background: url("./images/lang_bg.png") repeat-x;
+  height: 24px;
+  background-position-y: -15px;
+  transform: rotate(180deg);
+}
+
+.mainContent {
   padding-bottom: 5em;
   min-height: calc(100vh - 48px);
-  font-family: 'Shanti', sans-serif;
 }
 
 .mainPanel {
-  width: calc(35% - 1em);
+  width: 50%;
   min-height: 50vh;
   background: rgb(36, 28, 21);
   border: 3px solid #ab8002;
   border-radius: 0.5em;
+  margin-bottom: 3em;
 }
 
 .panelTitle {
@@ -114,15 +143,21 @@
 }
 
 .gobtn:hover {
-  opacity: 0.8;
+  filter: brightness(0.8);
+}
+
+.box {
+  width: 90vw;
+  margin: auto;
+  border: 3px solid #ab8002;
+  padding: 2em;
+  background-size: 100% auto;
 }
 
 .grid {
-  width: 90vw;
   margin: 1em auto;
   display: grid;
   grid-template-columns: repeat(auto-fill, 112px);
-  grid-gap: 0.3em;
   justify-content: space-between;
 }
 
@@ -132,4 +167,17 @@
   position: absolute;
   top: 0;
   left: 0;
+}
+
+.brown-button {
+  width: 91%;
+  margin: auto;
+  text-align: center;
+  line-height: 2em;
+  color: white;
+  text-shadow: 1px 1px black;
+}
+
+.importer {
+  display: flex;
 }

@@ -1,6 +1,6 @@
-import { useRef }            from "react";
-import titlebg               from "../titlebg.png";
-import gobg                  from "../images/areas.png";
+import { useRef }  from "react";
+import titlebg     from "../titlebg.png";
+import BrownButton from "./BrownButton.js";
 
 const ImageSelector = ({
   loading,
@@ -29,37 +29,17 @@ const ImageSelector = ({
         <div style={{backgroundImage: `url(${titlebg})`}} className="panelTitle">
           SCREENSHOTS
         </div>
-        <div style={{
-          backgroundImage: `url(${gobg})`,
-          backgroundSize: "contain",
-          position: "absolute",
-          right: "1em",
-          top: "0.5em",
-          width: "7.8em",
-          height: "2em",
-          cursor: (!loading && inputImages.length) ? "pointer" : "",
-          opacity: (!loading && inputImages.length) ? "" : "0.5",
-        }}
-          className="gobtn"
-          onClick={() => {
-            if (!loading && inputImages.length) {
+        <div style={{position: "absolute", right: "1em", top: "0.5em"}}>
+          <BrownButton
+            fontSize={"1em"}
+            text={"GO!"}
+            disabled={loading || !inputImages.length}
+            onClick={() => {
               setLoading(true);
               setResults([]);
               runProcess();
-            }
-          }}
-        >
-          <div style={{
-            backgroundColor: "#ac4d2a",
-            width: "91%",
-            margin: "auto",
-            marginTop: "0.4em",
-            height: "1.26em",
-            textAlign: "center",
-            lineHeight: "1.26em",
-            color: "white",
-            textShadow: "1px 1px black",
-          }}>{"GO!"}</div>
+            }}
+          />
         </div>
       </div>
       <div style={{
