@@ -55,7 +55,7 @@ const ImageImporter = ({
               ` : ""}
             </div>
             <div style={{
-              display: "flex",
+              display: results.length ? "flex" : "none",
               justifyContent: "space-between",
               width: "100%",
               height: "3em",
