@@ -1,6 +1,7 @@
 import {
   useState,
   useRef,
+  useEffect,
 }                          from "react";
 import {
   relevant
@@ -26,6 +27,10 @@ const App = () => {
   const [ display_importer, setDisplayImporter ] = useState(false);
   const importerRef       = useRef(null);
   const downloadAnchorRef = useRef(null);
+
+  useEffect(() => {
+    localStorage.setItem("optc-box", box);
+  }, [box]);
 
   const havePreevolution = id => {
     return box.some(id_b => evolutions[id_b] === id);
