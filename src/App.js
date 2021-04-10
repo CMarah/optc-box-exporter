@@ -27,6 +27,7 @@ const App = () => {
   const [ display_importer, setDisplayImporter ] = useState(false);
   const importerRef       = useRef(null);
   const downloadAnchorRef = useRef(null);
+  const inputFileRef      = useRef(null);
 
   useEffect(() => {
     localStorage.setItem("optc-box", box);
@@ -47,10 +48,23 @@ const App = () => {
   };
   document.addEventListener("mousedown", handleClick);
 
-  const saveResults = () => {
+  const saveFile = () => {
     const href = `data:text/plain;charset=utf-8,${encodeURIComponent(box)}`;
     downloadAnchorRef.current.href = href;
     downloadAnchorRef.current.click();
+  };
+  const loadFile = e => {
+    if (e.target.value) {
+      let fr = new FileReader();
+      fr.addEventListener('load', () => {
+        const new_box = fr.result.split(',')
+          .map(x => parseInt(x))
+          .filter(x => x);
+        setBox(new_box);
+        e.target.value = "";
+      });
+      fr.readAsText(e.target.files[0]);
+    }
   };
 
   return (<>
@@ -83,7 +97,13 @@ const App = () => {
           text="Save"
           fontSize="1.2em"
           disabled={false}
-          onClick={saveResults}
+          onClick={saveFile}
+        />
+        <BrownButton
+          text="Load"
+          fontSize="1.2em"
+          disabled={false}
+          onClick={() => inputFileRef.current.click()}
         />
       </div>
       <div className="box" style={{backgroundImage: `url(${bg})`}}>
@@ -93,17 +113,16 @@ const App = () => {
             .filter(x => [6,"6+"].includes(x[4]))
             .map((x, k) => {
               return (
-                <div key={`u-${i}-${k}`} style={{
-                  cursor: "pointer",
+                <div key={`u-${i}-${k}`}
+                  style={{
+                    cursor: "pointer",
                     filter: box.includes(x[0]) ? "" : "brightness(0.5)",
                     position: "relative",
-                }}
-                onClick={()=> {
-                  setBox(box.includes(x[0]) ?
+                  }}
+                  onClick={()=> setBox(box.includes(x[0]) ?
                     box.filter(id => id !== x[0]) :
                     box.concat(x[0])
-                  )
-                }}
+                  )}
                 >
                 <div className="frame"
                 style={{border: !box.includes(x[0]) && havePreevolution(x[0]) && "5px solid cyan"}}
@@ -126,6 +145,7 @@ const App = () => {
     </div>}
     <div style={{display: "none"}}>
       <a ref={downloadAnchorRef} download="box.txt" href="/">Save</a>
+      <input ref={inputFileRef} type="file" id="fileInput" name="file" onChange={loadFile}/>
     </div>
   </>);
 };
