@@ -3,6 +3,8 @@ import {
   useRef,
   useEffect,
 }                          from "react";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStar }          from '@fortawesome/free-solid-svg-icons';
 import {
   relevant
 }                          from "./data.js";
@@ -25,6 +27,9 @@ const App = () => {
       localStorage.getItem("optc-box").split(",").map(id => parseInt(id))
   );
   const [ display_importer, setDisplayImporter ] = useState(false);
+  const [ hovered_star, setHoveredStar ]         = useState(null);
+  const [ minimum_rarity, setMinimumRarity     ] = useState(6);
+  const [ name_filter, setNameFilter           ] = useState("");
   const importerRef       = useRef(null);
   const downloadAnchorRef = useRef(null);
   const inputFileRef      = useRef(null);
@@ -136,10 +141,42 @@ const App = () => {
         </div>
       </div>
       <div className="box" style={{backgroundImage: `url(${bg})`}}>
+        <div style={{ color: "white", fontSize: "2em", marginLeft: "3em", marginBottom: "1em" }}>
+          <div style={{display: "flex", position: "relative"}}>
+            <div>Minimum rarity:</div>
+            <div style={{left: "8em", position: "absolute"}}>{
+              (new Array(6)).fill(0).map((x, i) => {
+                return (<FontAwesomeIcon key={i} icon={faStar} size="sm"
+                  style={{
+                    color: hovered_star === null ?
+                      (minimum_rarity - 1 >= i ? "#ab8000" : "white") :
+                      (hovered_star >= i ? "#ab8000" : "white"),
+                    cursor: "pointer",
+                  }}
+                  onMouseEnter={() => setHoveredStar(i)}
+                  onMouseLeave={() => setHoveredStar(null)}
+                  onClick={() => setMinimumRarity(i+1)}
+                />);
+              })
+            }</div>
+          </div>
+          <div style={{display: "flex", position: "relative"}}>
+            <div>Name filter:</div>
+            <div style={{left: "8em", position: "absolute"}}>
+              <input type="text" style={{
+                border: 0, color: "white", background: "transparent",
+                borderBottom: "3px solid white",
+              }}
+                onChange={e => setNameFilter(e.target.value)}
+              />
+            </div>
+          </div>
+        </div>
         {relevant_by_type.map((g, i) => (
           <div className="grid" key={`g${i}`}>
           {g
-            .filter(x => [6,"6+"].includes(x[4]))
+            .filter(x => minimum_rarity <= parseInt(x[4]))
+            .filter(x => (new RegExp(name_filter, "i")).test(x[1]))
             .map((x, k) => {
               return (
                 <div key={`u-${i}-${k}`}
