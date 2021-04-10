@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/optc-box-exporter/static/css/main.b4572432.chunk.css",
-    "main.js": "/optc-box-exporter/static/js/main.0362b6de.chunk.js",
-    "main.js.map": "/optc-box-exporter/static/js/main.0362b6de.chunk.js.map",
+    "main.js": "/optc-box-exporter/static/js/main.e223c00f.chunk.js",
+    "main.js.map": "/optc-box-exporter/static/js/main.e223c00f.chunk.js.map",
     "runtime-main.js": "/optc-box-exporter/static/js/runtime-main.f961595f.js",
     "runtime-main.js.map": "/optc-box-exporter/static/js/runtime-main.f961595f.js.map",
     "static/js/2.6a2e8583.chunk.js": "/optc-box-exporter/static/js/2.6a2e8583.chunk.js",
@@ -23,6 +23,6 @@
     "static/js/runtime-main.f961595f.js",
     "static/js/2.6a2e8583.chunk.js",
     "static/css/main.b4572432.chunk.css",
-    "static/js/main.0362b6de.chunk.js"
+    "static/js/main.e223c00f.chunk.js"
   ]
 }
