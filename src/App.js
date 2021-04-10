@@ -11,11 +11,13 @@ import {
 import { evolutions }      from "./evolutions.js";
 import bg                  from "./images/bg.png";
 import logo                from "./OPTC_logo.png";
+import titlebg             from "./titlebg.png";
 import ImageImporter       from "./components/ImageImporter";
 import BrownButton         from "./components/BrownButton.js";
 import "./style.css";
 
 const purl       = process.env.PUBLIC_URL;
+const OPTCDB_URL = "https://optc-db.github.io/characters/#/view/";
 const types = ["STR", "DEX", "QCK", "PSY", "INT"];
 const relevant_by_type = [-1, 0, 1, 2, 3, 4, 5].map(
   tn => relevant.filter(u => tn === types.findIndex(t => t === u[2]))
@@ -27,10 +29,12 @@ const App = () => {
       localStorage.getItem("optc-box").split(",").map(id => parseInt(id))
   );
   const [ display_importer, setDisplayImporter ] = useState(false);
+  const [ display_help, setDisplayHelp ]         = useState(true);
   const [ hovered_star, setHoveredStar ]         = useState(null);
-  const [ minimum_rarity, setMinimumRarity     ] = useState(6);
-  const [ name_filter, setNameFilter           ] = useState("");
+  const [ minimum_rarity, setMinimumRarity ]     = useState(6);
+  const [ name_filter, setNameFilter ]           = useState("");
   const importerRef       = useRef(null);
+  const helpRef           = useRef(null);
   const downloadAnchorRef = useRef(null);
   const inputFileRef      = useRef(null);
   const copiedRef         = useRef(null);
@@ -50,6 +54,13 @@ const App = () => {
       display_importer === true
     ) {
       setDisplayImporter(false);
+    }
+    if (
+      helpRef.current && !helpRef.current.contains(e.target) &&
+      e.clientX < document.body.offsetWidth &&
+      display_help === true
+    ) {
+      setDisplayHelp(false);
     }
   };
   document.addEventListener("mousedown", handleClick);
@@ -84,7 +95,7 @@ const App = () => {
 
   return (<>
     <div style={{
-      filter: !display_importer ? "" : "blur(3px)",
+      filter: display_importer || display_help ? "blur(3px)" : "",
     }} className="mainContent">
       <div style={{textAlign: "center", padding: "2em", color: "white"}}>
         <img src={logo} alt=""/>
@@ -159,6 +170,16 @@ const App = () => {
                 />);
               })
             }</div>
+            <div style={{position: "absolute", right: 0}}>
+              <BrownButton
+                text="Help"
+                fontSize="0.75em"
+                disabled={false}
+                onClick={() => {
+                  setDisplayHelp(true);
+                }}
+              />
+            </div>
           </div>
           <div style={{display: "flex", position: "relative"}}>
             <div>Name filter:</div>
@@ -185,10 +206,16 @@ const App = () => {
                     filter: box.includes(x[0]) ? "" : "brightness(0.5)",
                     position: "relative",
                   }}
-                  onClick={()=> setBox(box.includes(x[0]) ?
-                    box.filter(id => id !== x[0]) :
-                    box.concat(x[0])
-                  )}
+                  onClick={e => {
+                    if (e.ctrlKey) {
+                      setBox(box.includes(x[0]) ?
+                        box.filter(id => id !== x[0]) :
+                        box.concat(x[0])
+                      );
+                    } else {
+                      window.open(OPTCDB_URL + x[0], "_blank");
+                    }
+                  }}
                 >
                 <div className="frame"
                 style={{border: !box.includes(x[0]) && havePreevolution(x[0]) && "5px solid cyan"}}
@@ -209,7 +236,35 @@ const App = () => {
       display: display_importer ? "" : "none",
     }}>
       <ImageImporter box={box} setBox={setBox} setDisplayImporter={setDisplayImporter}/>
-    </div>}
+    </div>
+    <div ref={helpRef} style={{
+      position: "absolute", top: "15em", margin: "0 15%", width: "70%",
+      display: display_help ? "" : "none",
+      minWidth: "15em",
+      minHeight: "10em",
+      background: "rgb(36, 28, 21)",
+      color: "white",
+      border: "3px solid #ab8002",
+      borderRadius: "0.5em",
+      padding: "2em",
+      paddingTop: "0.5em",
+      fontSize: "1.3em",
+    }}>
+      <div style={{backgroundImage: `url(${titlebg})`}} className="panelTitle">
+        HELP
+      </div>
+      <ul>
+        <li>Click on a character to open their optc-db info</li>
+        <li>Ctrl+Click on a character to add/remove them from your box</li>
+        <li>Characters with a <span style={{color: "cyan"}}>blue</span> frame indicate
+          you have their preevolution in your box
+        </li>
+        <li>The Copy button copies all character's IDs to your clipboard, so you can paste them
+          in your <a href="https://www.nakama.network/boxes">Nakama Network box</a>
+        </li>
+        <li>Use Add Units to import your OPTC box from screenshots</li>
+      </ul>
+    </div>
     <div style={{display: "none"}}>
       <a ref={downloadAnchorRef} download="box.txt" href="/">Save</a>
       <input ref={inputFileRef} type="file" id="fileInput" name="file" onChange={loadFile}/>

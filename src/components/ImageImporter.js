@@ -52,7 +52,12 @@ const ImageImporter = ({
                 ${new Set(results.map(c => c.id).filter(id => id)).size}
                 unique characters,
                 ${results.length - new Set(results.map(c => c.id)).size} duplicates.
-              ` : ""}
+              ` : <p style={{padding: "3em", textAlign: "left"}}>
+                Found characters will be displayed here. Add your in-game,
+                fullscreen OPTC screenshots on the left panel. Make sure your character's
+                icons are visible in them, 4/5 rows from each image will be processed.<br/><br/>
+                The process shouldn't take more than a few minutes.
+              </p>}
             </div>
             <div style={{
               display: results.length ? "flex" : "none",
