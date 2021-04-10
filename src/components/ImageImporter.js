@@ -10,12 +10,15 @@ import { processImages }   from "../cv.js";
 import ImageSelector       from "./ImageSelector";
 import titlebg             from "../titlebg.png";
 import load_logo           from "../loading.png";
+import BrownButton         from "./BrownButton.js";
 
 const purl       = process.env.PUBLIC_URL;
 const OPTCDB_URL = "https://optc-db.github.io/characters/#/view/";
 
 const ImageImporter = ({
+  box,
   setBox,
+  setDisplayImporter,
 }) => {
   const [ results, setResults ]                  = useState([]);
   const [ progress, setProgress ]                = useState("Initializing...");
@@ -30,7 +33,6 @@ const ImageImporter = ({
         setProgress("Loading assets...");
         setLoading(false);
         setResults(r);
-        setBox(r.map(c => c.id));
       },
     );
   };
@@ -85,6 +87,33 @@ const ImageImporter = ({
                 unique characters,
                 ${results.length - new Set(results.map(c => c.id)).size} duplicates.
               ` : ""}
+            </div>
+            <div style={{
+              display: "flex",
+              justifyContent: "space-between",
+              width: "100%",
+              height: "3em",
+              margin: "0 auto",
+              padding: "0 5em",
+            }}>
+              <BrownButton
+                text="Add to box"
+                disabled={false}
+                onClick={() => {
+                  const new_ids = results.map(c => c.id);
+                  setBox([...new Set(box.concat(new_ids))]);
+                  setDisplayImporter(false);
+                }}
+              />
+              <BrownButton
+                text="Replace box"
+                disabled={false}
+                onClick={() => {
+                  const new_ids = results.map(c => c.id);
+                  setBox([...new Set(new_ids)]);
+                  setDisplayImporter(false);
+                }}
+              />
             </div>
             {results.length ? [...new Set(results.map(c => c.id))]
               .filter(id => id)

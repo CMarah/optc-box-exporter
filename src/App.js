@@ -138,10 +138,11 @@ const App = () => {
         ))}
       </div>
     </div>
-    {display_importer && <div ref={importerRef}
-      style={{position: "absolute", top: "25em", margin: "0 15%", width: "70%"}}
-    >
-      <ImageImporter setBox={setBox}/>
+    <div ref={importerRef} style={{
+      position: "absolute", top: "25em", margin: "0 15%", width: "70%",
+      display: display_importer ? "" : "none",
+    }}>
+      <ImageImporter box={box} setBox={setBox} setDisplayImporter={setDisplayImporter}/>
     </div>}
     <div style={{display: "none"}}>
       <a ref={downloadAnchorRef} download="box.txt" href="/">Save</a>
