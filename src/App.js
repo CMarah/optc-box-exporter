@@ -28,6 +28,7 @@ const App = () => {
   const importerRef       = useRef(null);
   const downloadAnchorRef = useRef(null);
   const inputFileRef      = useRef(null);
+  const copiedRef         = useRef(null);
 
   useEffect(() => {
     localStorage.setItem("optc-box", box);
@@ -66,6 +67,15 @@ const App = () => {
       fr.readAsText(e.target.files[0]);
     }
   };
+  const copyBox = () => {
+    copiedRef.current.style.transition = '0.1s';
+    copiedRef.current.style.opacity = 1;
+    navigator.clipboard.writeText(box);
+    setTimeout(() => {
+      copiedRef.current.style.transition = '0.4s';
+      copiedRef.current.style.opacity = 0;
+    }, 600);
+  };
 
   return (<>
     <div style={{
@@ -80,7 +90,7 @@ const App = () => {
         }}>OPTC Box Manager</h1>
       </div>
       <div style={{
-        maxWidth: "30em",
+        maxWidth: "40em",
         margin: "2em auto",
         display: "flex",
         justifyContent: "space-between",
@@ -105,6 +115,25 @@ const App = () => {
           disabled={false}
           onClick={() => inputFileRef.current.click()}
         />
+        <div style={{position: "relative"}}>
+          <BrownButton
+            text="Copy"
+            fontSize="1.2em"
+            disabled={false}
+            onClick={() => copyBox()}
+          />
+          <div ref={copiedRef} style={{
+            opacity: 0,
+            background: "grey",
+            borderRadius: "0.2em",
+            position: "absolute",
+            right: "3em",
+            top: "3em",
+            padding: "0.5em",
+            color: "white",
+            zIndex: "20",
+          }}>Copied!</div>
+        </div>
       </div>
       <div className="box" style={{backgroundImage: `url(${bg})`}}>
         {relevant_by_type.map((g, i) => (
