@@ -29,7 +29,7 @@ const App = () => {
       localStorage.getItem("optc-box").split(",").map(id => parseInt(id))
   );
   const [ display_importer, setDisplayImporter ] = useState(false);
-  const [ display_help, setDisplayHelp ]         = useState(true);
+  const [ display_help, setDisplayHelp ]         = useState(false);
   const [ hovered_star, setHoveredStar ]         = useState(null);
   const [ minimum_rarity, setMinimumRarity ]     = useState(6);
   const [ name_filter, setNameFilter ]           = useState("");
