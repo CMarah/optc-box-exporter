@@ -38,6 +38,7 @@ const App = () => {
   const downloadAnchorRef = useRef(null);
   const inputFileRef      = useRef(null);
   const copiedRef         = useRef(null);
+  const copiedEvoRef      = useRef(null);
 
   useEffect(() => {
     localStorage.setItem("optc-box", box);
@@ -46,6 +47,14 @@ const App = () => {
   const havePreevolution = id => {
     return box.some(id_b => evolutions[id_b] === id);
   };
+
+  const addEvos = box => box.reduce((acc, id) => {
+    let new_units = [id];
+    while (evolutions[new_units[new_units.length-1]]) {
+      new_units.push(evolutions[new_units[new_units.length-1]]);
+    }
+    return acc.concat(new_units);
+  }, []);
 
   const handleClick = e => {
     if (
@@ -83,13 +92,14 @@ const App = () => {
       fr.readAsText(e.target.files[0]);
     }
   };
-  const copyBox = () => {
-    copiedRef.current.style.transition = '0.1s';
-    copiedRef.current.style.opacity = 1;
-    navigator.clipboard.writeText(box);
+  const copyBox = copy_evos => {
+    const cpRef = copy_evos ? copiedEvoRef : copiedRef;
+    cpRef.current.style.transition = '0.1s';
+    cpRef.current.style.opacity = 1;
+    navigator.clipboard.writeText(!copy_evos ? box : addEvos(box));
     setTimeout(() => {
-      copiedRef.current.style.transition = '0.4s';
-      copiedRef.current.style.opacity = 0;
+      cpRef.current.style.transition = '0.4s';
+      cpRef.current.style.opacity = 0;
     }, 600);
   };
 
@@ -106,7 +116,7 @@ const App = () => {
         }}>OPTC Box Manager</h1>
       </div>
       <div style={{
-        maxWidth: "40em",
+        maxWidth: "50em",
         margin: "2em auto",
         display: "flex",
         justifyContent: "space-between",
@@ -136,9 +146,28 @@ const App = () => {
             text="Copy"
             fontSize="1.2em"
             disabled={false}
-            onClick={() => copyBox()}
+            onClick={() => copyBox(false)}
           />
           <div ref={copiedRef} style={{
+            opacity: 0,
+            background: "grey",
+            borderRadius: "0.2em",
+            position: "absolute",
+            right: "3em",
+            top: "3em",
+            padding: "0.5em",
+            color: "white",
+            zIndex: "20",
+          }}>Copied!</div>
+        </div>
+        <div style={{position: "relative"}}>
+          <BrownButton
+            text="Copy w/ Evos"
+            fontSize="1.2em"
+            disabled={false}
+            onClick={() => copyBox(true)}
+          />
+          <div ref={copiedEvoRef} style={{
             opacity: 0,
             background: "grey",
             borderRadius: "0.2em",
