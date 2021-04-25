@@ -4910,7 +4910,9 @@ const relevant_ids = [
   3382,
   3383
 ].reverse();
+const to_remove = [963,964,965,2579];
 const relevant = relevant_ids
+  .filter(id => !to_remove.includes(id))
   .map(id => ([ id, ...UNITS_DATA[id-1]]));
 
 export {
